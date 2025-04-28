@@ -142,7 +142,7 @@ const ProductDetails = () => {
         [product.id]: currentQuantity + 1
       }));
 
-      setAlertMessage('Added To Cart');
+      setAlertMessage('Added to cart successfully');
     } catch (error) {
       setAlertMessage('Error adding to cart');
     } finally {
@@ -161,7 +161,7 @@ const ProductDetails = () => {
   if (!product) {
     return (
       <Container className="text-center my-3" style={{ padding: '10px' }}>
-        <h5 style={{ fontSize: '0.9rem' }}>Product Does Not Exist Anymore</h5>
+        <h5 style={{ fontSize: '0.9rem' }}>Product not found</h5>
       </Container>
     );
   }

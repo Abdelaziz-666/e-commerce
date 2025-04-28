@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { Container, Card, Form, Button, Alert, Spinner, Tab, Tabs, Badge } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { auth, db } from '../firebase/Config';
 import { useOrders } from '../firebase/hooks/UseOrders';
 import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
     name: '',
@@ -46,14 +44,14 @@ const ProfilePage = () => {
         }
       } catch (err) {
         console.error('Error fetching user data:', err);
-        setError(t('error_loading_profile'));
+        setError('Error loading profile');
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [t]);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +62,7 @@ const ProfilePage = () => {
     try {
       setLoading(true);
       const user = auth.currentUser;
-      if (!user) throw new Error(t('user_not_authenticated'));
+      if (!user) throw new Error('User not authenticated');
 
       await updateDoc(doc(db, 'users', user.uid), {
         name: userData.name,
@@ -72,11 +70,11 @@ const ProfilePage = () => {
         phone: userData.phone,
       });
 
-      setSuccess(t('profile_updated_success'));
+      setSuccess('Profile updated successfully');
       setEditMode(false);
     } catch (err) {
       console.error('Error updating profile:', err);
-      setError(err.message || t('error_updating_profile'));
+      setError(err.message || 'Error updating profile');
     } finally {
       setLoading(false);
     }
@@ -85,29 +83,29 @@ const ProfilePage = () => {
   const handleChangePassword = async () => {
     try {
       if (newPassword !== confirmPassword) {
-        throw new Error(t('passwords_do_not_match'));
+        throw new Error('Passwords do not match');
       }
 
       const user = auth.currentUser;
-      if (!user) throw new Error(t('user_not_authenticated'));
+      if (!user) throw new Error('User not authenticated');
 
       const credential = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, newPassword);
 
-      setSuccess(t('password_changed_success'));
+      setSuccess('Password changed successfully');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
       console.error('Error changing password:', err);
-      setError(err.message || t('error_changing_password'));
+      setError(err.message || 'Error changing password');
     }
   };
 
   const reorderItem = async (order) => {
     console.log('Reordering:', order);
-    alert(t('reorder_feature_coming_soon'));
+    alert('Reorder feature coming soon!');
   };
 
   const getStatusBadge = (status) => {
@@ -118,14 +116,14 @@ const ProfilePage = () => {
       delivered: 'primary',
       cancelled: 'danger',
     };
-    return <Badge bg={statusMap[status] || 'secondary'}>{t(status)}</Badge>;
+    return <Badge bg={statusMap[status] || 'secondary'}>{status}</Badge>;
   };
 
   if (loading && activeTab === 'profile') {
     return (
       <div className="text-center mt-5">
         <Spinner animation="border" variant="primary" />
-        <p>{t('loading_profile')}...</p>
+        <p>Loading profile...</p>
       </div>
     );
   }
@@ -137,42 +135,42 @@ const ProfilePage = () => {
       transition={{ duration: 0.5 }}
     >
       <Container className="my-5">
-        <h2 className="mb-4">{t('Profile')}</h2>
+        <h2 className="mb-4">My Profile</h2>
 
         {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
         {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
         {(userData.role === 'admin' || userData.role === 'owner') && (
-                  <div className="text-center mt-4">
-                    <Button 
-                      variant="dark" 
-                      onClick={() => navigate('/admin')}
-                      className="px-4 py-2"
-                    >
-                       {t('Go to admin panel')}
-                    </Button>
-                  </div>
-                )}
+          <div className="text-center mt-4">
+            <Button 
+              variant="dark" 
+              onClick={() => navigate('/admin')}
+              className="px-4 py-2"
+            >
+              Go to Admin Panel
+            </Button>
+          </div>
+        )}
         <Tabs
           activeKey={activeTab}
           onSelect={(k) => setActiveTab(k)}
           className="mb-4"
         >
-          <Tab eventKey="profile" title={t('profile')}>
+          <Tab eventKey="profile" title="Profile">
             <Card className="shadow-sm">
               <Card.Body>
                 <div className="d-flex justify-content-between align-items-center mb-4">
-                  <h4>{t('personal nfo')}</h4>
+                  <h4>Personal Information</h4>
                   {!editMode ? (
                     <Button variant="outline-primary" onClick={() => setEditMode(true)}>
-                      {t('Edit profile')}
+                      Edit Profile
                     </Button>
                   ) : (
                     <div>
                       <Button variant="outline-secondary" onClick={() => setEditMode(false)} className="me-2">
-                        {t('cancel')}
+                        Cancel
                       </Button>
                       <Button variant="primary" onClick={handleSaveProfile} disabled={loading}>
-                        {loading ? <Spinner size="sm" /> : t('save changes')}
+                        {loading ? <Spinner size="sm" /> : 'Save Changes'}
                       </Button>
                     </div>
                   )}
@@ -180,7 +178,7 @@ const ProfilePage = () => {
 
                 <Form>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('full name')}</Form.Label>
+                    <Form.Label>Full Name</Form.Label>
                     {editMode ? (
                       <Form.Control
                         type="text"
@@ -194,12 +192,12 @@ const ProfilePage = () => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('email')}</Form.Label>
+                    <Form.Label>Email</Form.Label>
                     <Form.Control plaintext readOnly defaultValue={userData.email} />
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('address')}</Form.Label>
+                    <Form.Label>Address</Form.Label>
                     {editMode ? (
                       <Form.Control
                         as="textarea"
@@ -209,12 +207,12 @@ const ProfilePage = () => {
                         onChange={handleInputChange}
                       />
                     ) : (
-                      <Form.Control plaintext readOnly defaultValue={userData.address || t(' ')} />
+                      <Form.Control plaintext readOnly defaultValue={userData.address || 'Not specified'} />
                     )}
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('phone')}</Form.Label>
+                    <Form.Label>Phone</Form.Label>
                     {editMode ? (
                       <Form.Control
                         type="tel"
@@ -223,21 +221,19 @@ const ProfilePage = () => {
                         onChange={handleInputChange}
                       />
                     ) : (
-                      <Form.Control plaintext readOnly defaultValue={userData.phone || t(" ")} />
+                      <Form.Control plaintext readOnly defaultValue={userData.phone || 'Not specified'} />
                     )}
                   </Form.Group>
                 </Form>
-
-               
               </Card.Body>
             </Card>
 
             <Card className="shadow-sm mt-4">
               <Card.Body>
-                <h4 className="mb-4">{t('change password')}</h4>
+                <h4 className="mb-4">Change Password</h4>
                 <Form>
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('current password')}</Form.Label>
+                    <Form.Label>Current Password</Form.Label>
                     <Form.Control
                       type="password"
                       value={currentPassword}
@@ -246,7 +242,7 @@ const ProfilePage = () => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('new password')}</Form.Label>
+                    <Form.Label>New Password</Form.Label>
                     <Form.Control
                       type="password"
                       value={newPassword}
@@ -255,7 +251,7 @@ const ProfilePage = () => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>{t('confirm password')}</Form.Label>
+                    <Form.Label>Confirm Password</Form.Label>
                     <Form.Control
                       type="password"
                       value={confirmPassword}
@@ -268,18 +264,18 @@ const ProfilePage = () => {
                     onClick={handleChangePassword}
                     disabled={!currentPassword || !newPassword || !confirmPassword}
                   >
-                    {t('change password')}
+                    Change Password
                   </Button>
                 </Form>
               </Card.Body>
             </Card>
           </Tab>
 
-          <Tab eventKey="orders" title={t('Orders')}>
+          <Tab eventKey="orders" title="My Orders">
             {ordersLoading ? (
               <div className="text-center mt-5">
                 <Spinner animation="border" variant="primary" />
-                <p>{t('loading_orders')}...</p>
+                <p>Loading orders...</p>
               </div>
             ) : (
               <div className="mt-3">
@@ -301,7 +297,7 @@ const ProfilePage = () => {
                         </div>
 
                         <div className="mt-3">
-                          <h6>{t('items')}:</h6>
+                          <h6>Items:</h6>
                           <ul className="list-unstyled">
                             {order.items?.map(item => (
                               <li key={item.id} className="d-flex justify-content-between py-2 border-bottom">
@@ -322,13 +318,13 @@ const ProfilePage = () => {
                           className="mt-2"
                           onClick={() => reorderItem(order)}
                         >
-                          {t('reorder')}
+                          Reorder
                         </Button>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <Alert variant="info">{t('No orders founded')}</Alert>
+                  <Alert variant="info">No orders found</Alert>
                 )}
               </div>
             )}

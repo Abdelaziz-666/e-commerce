@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Spinner, Container } from 'react-bootstrap';
 import { getProducts, getCategories } from '../../firebase/services/Product-service';
 import NewArrivalsSlider from './components/HomePage.js/NewArrivalsSlider';
@@ -13,7 +12,6 @@ import Sidebar from '../../components2/Sidebar';
 import Favorites from '../Favorites';
 
 const Home = () => {
-  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +29,7 @@ const Home = () => {
         setProducts(fetchedProducts || []);
         setCategories(fetchedCategories || []);
       } catch (err) {
-        console.error('فشل تحميل البيانات:', err);
+        console.error('Error', err);
       } finally {
         setLoading(false);
       }
@@ -59,7 +57,7 @@ const Home = () => {
       <NewCollection />
       <NewCollectionSlider products={products.filter(p => p?.isOnSale)} />
       <AllCollectionsText />
-      <AllCollections title="كل المنتجات" products={products} />
+      <AllCollections title="all products" products={products} />
       <Sidebar products = {products} />
 
    </div>

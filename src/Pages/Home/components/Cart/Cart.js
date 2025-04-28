@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
 import { Button, Table, Badge, Spinner, Alert, Row, Col } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { useCart } from '../../../../firebase/hooks/UseCart';
 import { removeFromCart, updateCartItem } from '../../../../firebase/services/Cart-service';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const Cart = ({ userId }) => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { cartItems, loading, error, total, itemCount } = useCart(userId);
 
@@ -22,7 +20,7 @@ const Cart = ({ userId }) => {
     if (!product) return;
     
     if (newQuantity > product.inStock) {
-      alert(t('Limited Item Quantity'));
+      alert('Limited Item Quantity');
       return;
     }
 
@@ -30,7 +28,7 @@ const Cart = ({ userId }) => {
       await updateCartItem(userId, productId, newQuantity);
     } catch (err) {
       console.error("Error updating quantity:", err);
-      alert(t('Error'));
+      alert('Error updating quantity');
     }
   };
 
@@ -39,14 +37,14 @@ const Cart = ({ userId }) => {
       await removeFromCart(userId, productId);
     } catch (err) {
       console.error("Error removing item:", err);
-      alert(t('Error'));
+      alert('Error removing item');
     }
   };
 
   if (loading) return (
     <div className="d-flex justify-content-center mt-5">
       <Spinner animation="border" variant="primary" />
-      <span className="ms-2">{t('loading')}...</span>
+      <span className="ms-2">Loading...</span>
     </div>
   );
 
@@ -58,9 +56,9 @@ const Cart = ({ userId }) => {
 
   if (!cartItems || cartItems.length === 0) return (
     <div className="text-center mt-5">
-      <h4>{t('Cart empty')}</h4>
+      <h4>Your cart is empty</h4>
       <Button variant="primary" onClick={() => navigate('/')} className="mt-3">
-        {t('Continue shopping')}
+        Continue Shopping
       </Button>
     </div>
   );
@@ -75,7 +73,7 @@ const Cart = ({ userId }) => {
       <Row className="mb-4">
         <Col>
           <h3>
-            {t('Cart')} <Badge bg="primary" pill>{itemCount}</Badge>
+            Shopping Cart <Badge bg="primary" pill>{itemCount}</Badge>
           </h3>
         </Col>
       </Row>
@@ -83,11 +81,11 @@ const Cart = ({ userId }) => {
       <Table striped bordered hover responsive className="mb-4">
         <thead className="table-dark">
           <tr>
-            <th className="text-center">{t('Product')}</th>
-            <th className="text-center">{t('price')}</th>
-            <th className="text-center">{t('quantity')}</th>
-            <th className="text-center">{t('total')}</th>
-            <th className="text-center">{t('actions')}</th>
+            <th className="text-center">Product</th>
+            <th className="text-center">Price</th>
+            <th className="text-center">Quantity</th>
+            <th className="text-center">Total</th>
+            <th className="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -111,8 +109,8 @@ const Cart = ({ userId }) => {
                     />
                     <div>
                       <h6 className="mb-1">{item.name}</h6>
-                      {item.size && <small className="text-muted">{t('size')}: {item.size}</small>}
-                      {item.color && <small className="text-muted d-block">{t('color')}: {item.color}</small>}
+                      {item.size && <small className="text-muted">Size: {item.size}</small>}
+                      {item.color && <small className="text-muted d-block">Color: {item.color}</small>}
                     </div>
                   </div>
                 </td>
@@ -142,7 +140,7 @@ const Cart = ({ userId }) => {
                     </div>
                     {item.quantity >= item.inStock && (
                       <small className="text-danger">
-                        {t('Max quantity in Stock')} ({item.inStock})
+                        Max quantity in Stock ({item.inStock})
                       </small>
                     )}
                   </div>
@@ -168,11 +166,12 @@ const Cart = ({ userId }) => {
         <Col md={4}>
           <div className="border p-3 rounded bg-light shadow-sm">
             <div className="d-flex justify-content-between mb-2">
-
+              <span>Subtotal:</span>
+              <span>${Number(total).toFixed(2)}</span>
             </div>
             <hr />
             <h4 className="d-flex justify-content-between mb-3">
-              <span>{t('total')}:</span>
+              <span>Total:</span>
               <span className="text-primary">${Number(total).toFixed(2)}</span>
             </h4>
             <Button 
@@ -181,11 +180,11 @@ const Cart = ({ userId }) => {
               className="w-100 py-3 fw-bold"
               onClick={() => navigate('/checkout')}
             >
-              {t('Checkout')}
+              Proceed to Checkout
             </Button>
             <div className="text-center mt-2">
               <small className="text-muted">
-                {t('or')} <a href="/" className="text-decoration-none">{t('continue shopping')}</a>
+                or <a href="/" className="text-decoration-none">continue shopping</a>
               </small>
             </div>
           </div>

@@ -14,7 +14,7 @@ const Register = () => {
     const password = e.target.password.value;
     const name = e.target.name.value;
 
-    const role =  'customer';
+    const role = 'customer';
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -27,7 +27,7 @@ const Register = () => {
       await setDoc(doc(db, 'users', user.uid), {
         name: name,
         email: email,
-        role: role, 
+        role: role,
         cart: [],
         createdAt: new Date()
       });

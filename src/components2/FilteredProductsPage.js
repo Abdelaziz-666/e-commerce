@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, Row, Badge, Alert, Spinner, Form } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { getAuth } from "firebase/auth";
@@ -10,7 +9,6 @@ import useFavorites from "../firebase/services/Favorites-service";
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 function FilteredProducts() {
-  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loadingStates, setLoadingStates] = useState({});
@@ -131,7 +129,7 @@ function FilteredProducts() {
         [productId]: currentQuantity + 1
       }));
 
-      setAlertMessage(`${t('Added To Cart')}`);
+      setAlertMessage(`Added To Cart`);
       setTimeout(() => setAlertMessage(null), 3000);
     } catch (error) {
       setErrors(prev => ({
@@ -232,7 +230,7 @@ function FilteredProducts() {
           }}
           style={{ maxWidth: "300px", margin: "0 auto" }}
         >
-          <option value="all">{t('all categories')}</option>
+          <option value="all">All Categories</option>
           {categories.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
@@ -247,13 +245,13 @@ function FilteredProducts() {
 
       {filteredProducts.length === 0 ? (
         <div className="text-center py-5">
-          <h4>{t('No products found matching your filters')}</h4>
+          <h4>No products found matching your filters</h4>
           <Button 
             variant="primary" 
             onClick={() => navigate('/filtered-products')}
             className="mt-3"
           >
-            {t('Clear Filters')}
+            Clear Filters
           </Button>
         </div>
       ) : (
@@ -302,7 +300,7 @@ function FilteredProducts() {
 
                     {product.inStock <= 0 && (
                       <Badge bg="danger" className="position-absolute top-0 start-0 m-2">
-                        {t('out of stock')}
+                        Out of stock
                       </Badge>
                     )}
                     {product.inStock > 0 && product.discount > 0 && (
@@ -346,7 +344,7 @@ function FilteredProducts() {
                             ) : currentQuantity >= product.inStock ? (
                               `Max in stock : ${product.inStock}`
                             ) : (
-                              t('Add to cart')
+                              'Add to cart'
                             )}
                           </Button>
                           <Button
@@ -354,7 +352,7 @@ function FilteredProducts() {
                             size="sm"
                             onClick={() => navigate(`/product/${product.id}`)}
                           >
-                            {t('view details')}
+                            View Details
                           </Button>
                         </div>
                       </div>

@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Modal, Form, Button, Image, Spinner, Alert, Row, Col } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { db } from '../../firebase/Config';
 import { collection, addDoc, serverTimestamp, doc, deleteDoc, getDocs } from 'firebase/firestore';
 
 const AddProduct = ({ show, handleClose, onProductAdded }) => {
-  const { t } = useTranslation();
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
@@ -95,7 +93,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
 
     try {
       if (!newProduct.name.trim() || !newProduct.originalPrice || !newProduct.category) {
-        throw new Error(t('fill required fields'));
+        throw new Error('Please fill all required fields');
       }
 
       if (isNaN(parseFloat(newProduct.price))) {
@@ -159,7 +157,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
 
     } catch (err) {
       console.error('Error saving product:', err);
-      setError(err.message || t('upload failed'));
+      setError(err.message || 'Upload failed');
     } finally {
       setIsUploading(false);
     }
@@ -167,12 +165,12 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
 
   const handleAddCategory = async () => {
     if (!newCategory.name.trim()) {
-      setError(t('category name required'));
+      setError('Category name is required');
       return;
     }
 
     if (!newCategory.icon) {
-      setError(t('category icon required'));
+      setError('Category icon is required');
       return;
     }
 
@@ -216,14 +214,14 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
       
     } catch (err) {
       console.error('Error adding category:', err);
-      setError(err.message || t('category upload failed'));
+      setError(err.message || 'Category upload failed');
     } finally {
       setIsUploading(false);
     }
   };
 
   const handleDeleteCategory = async (categoryId) => {
-    if (window.confirm(t('confirm delete category'))) {
+    if (window.confirm('Are you sure you want to delete this category?')) {
       try {
         await deleteDoc(doc(db, 'categories', categoryId));
         setCategories(categories.filter(cat => cat.id !== categoryId));
@@ -233,7 +231,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
         }
       } catch (err) {
         console.error('Error deleting category:', err);
-        setError(t('delete category failed'));
+        setError('Failed to delete category');
       }
     }
   };
@@ -243,12 +241,12 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
     if (!file) return;
 
     if (!file.type.match('image.*')) {
-      setError(t('only images allowed'));
+      setError('Only image files are allowed');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError(t('image too large'));
+      setError('Image is too large (max 5MB)');
       return;
     }
 
@@ -261,12 +259,12 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
     if (!file) return;
 
     if (!file.type.match('image.*')) {
-      setError(t('only images allowed'));
+      setError('Only image files are allowed');
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      setError(t('image too large'));
+      setError('Image is too large (max 2MB)');
       return;
     }
 
@@ -276,7 +274,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
 
   const addDetail = () => {
     if (!newDetailKey.trim() || !newDetailValue.trim()) {
-      setError(t('details key required'));
+      setError('Both key and value are required for details');
       return;
     }
 
@@ -321,7 +319,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
   return (
     <Modal show={show} onHide={handleCloseModal} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>{t('add new product')}</Modal.Title>
+        <Modal.Title>Add New Product</Modal.Title>
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
@@ -330,7 +328,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>{t('name')} *</Form.Label>
+                <Form.Label>Name *</Form.Label>
                 <Form.Control 
                   type="text"
                   value={newProduct.name}
@@ -340,7 +338,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
               </Form.Group>
               
               <Form.Group className="mb-3">
-                <Form.Label>{t('original price')} *</Form.Label>
+                <Form.Label>Original Price *</Form.Label>
                 <Form.Control 
                   type="number"
                   min="0"
@@ -352,7 +350,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
               </Form.Group>
               
               <Form.Group className="mb-3">
-                <Form.Label>{t('discount')} (%)</Form.Label>
+                <Form.Label>Discount (%)</Form.Label>
                 <Form.Control 
                   type="number"
                   min="0"
@@ -363,7 +361,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
               </Form.Group>
               
               <Form.Group className="mb-3">
-                <Form.Label>{t('price after discount')}</Form.Label>
+                <Form.Label>Price After Discount</Form.Label>
                 <Form.Control 
                   type="number"
                   value={newProduct.price}
@@ -373,7 +371,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
               </Form.Group>
               
               <Form.Group className="mb-3">
-                <Form.Label>{t('stock')} *</Form.Label>
+                <Form.Label>Stock *</Form.Label>
                 <Form.Control 
                   type="number"
                   min="1"
@@ -385,13 +383,13 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
 
               {/* Product Details Section */}
               <Form.Group className="mb-3">
-                <Form.Label>{t('product details')}</Form.Label>
+                <Form.Label>Product Details</Form.Label>
                 <div className="border p-3 rounded mb-2">
                   <Row className="mb-3">
                     <Col>
                       <Form.Control
                         type="text"
-                        placeholder={t('details key ')}
+                        placeholder="Detail key"
                         value={newDetailKey}
                         onChange={(e) => setNewDetailKey(e.target.value)}
                       />
@@ -399,7 +397,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                     <Col>
                       <Form.Control
                         type="text"
-                        placeholder={t('detail value ')}
+                        placeholder="Detail value"
                         value={newDetailValue}
                         onChange={(e) => setNewDetailValue(e.target.value)}
                       />
@@ -410,14 +408,14 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                         onClick={addDetail}
                         disabled={isUploading}
                       >
-                        {t('add')}
+                        Add
                       </Button>
                     </Col>
                   </Row>
 
                   {newProduct.details.length > 0 && (
                     <div className="mt-2">
-                      <h6>{t('current details')}:</h6>
+                      <h6>Current Details:</h6>
                       <ul className="list-group">
                         {newProduct.details.map((detail, index) => (
                           <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
@@ -443,21 +441,21 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <div className="d-flex justify-content-between align-items-center">
-                  <Form.Label>{t('category')} *</Form.Label>
+                  <Form.Label>Category *</Form.Label>
                   <Button 
                     variant="outline-primary" 
                     size="sm" 
                     onClick={() => setShowAddCategory(!showAddCategory)}
                     disabled={isUploading}
                   >
-                    {showAddCategory ? t('hide add category') : t('add category')}
+                    {showAddCategory ? 'Hide Add Category' : 'Add Category'}
                   </Button>
                 </div>
                 
                 {showAddCategory ? (
                   <div className="border p-3 mb-3 rounded">
                     <Form.Group className="mb-3">
-                      <Form.Label>{t('category name')} *</Form.Label>
+                      <Form.Label>Category Name *</Form.Label>
                       <Form.Control 
                         type="text"
                         value={newCategory.name}
@@ -466,7 +464,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                     </Form.Group>
                     
                     <Form.Group className="mb-3">
-                      <Form.Label>{t('category icon')} *</Form.Label>
+                      <Form.Label>Category Icon *</Form.Label>
                       <Form.Control 
                         type="file"
                         accept="image/*"
@@ -492,7 +490,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                             }}
                             disabled={isUploading}
                           >
-                            {t('remove icon')}
+                            Remove Icon
                           </Button>
                         </div>
                       )}
@@ -506,10 +504,10 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                       >
                         {isUploading ? (
                           <>
-                            <Spinner as="span" animation="border" size="sm" /> {t('saving')}...
+                            <Spinner as="span" animation="border" size="sm" /> Saving...
                           </>
                         ) : (
-                          t('save category')
+                          'Save Category'
                         )}
                       </Button>
                     </div>
@@ -521,7 +519,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                       onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
                       required
                     >
-                      <option value="">{t('select category')}</option>
+                      <option value="">Select Category</option>
                       {categories.map((category) => (
                         <option key={category.id} value={category.name}>
                           {category.name}
@@ -537,7 +535,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                           categories.find(c => c.name === newProduct.category)?.id
                         )}
                         disabled={isUploading}
-                        title={t('delete category')}
+                        title="Delete Category"
                       >
                         <i className="bi bi-trash"></i>
                       </Button>
@@ -547,20 +545,20 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
               </Form.Group>
               
               <Form.Group className="mb-3">
-                <Form.Label>{t('section')}</Form.Label>
+                <Form.Label>Section</Form.Label>
                 <Form.Control 
                   as="select"
                   value={newProduct.section}
                   onChange={(e) => setNewProduct({...newProduct, section: e.target.value})}
                 >
-                  <option value="regular">{t('regular product')}</option>
-                  <option value="new-arrival">{t('new arrival')}</option>
-                  <option value="hero">{t('hero section')}</option>
+                  <option value="regular">Regular Product</option>
+                  <option value="new-arrival">New Arrival</option>
+                  <option value="hero">Hero Section</option>
                 </Form.Control>
               </Form.Group>
               
               <Form.Group className="mb-3">
-                <Form.Label>{t('product image')}</Form.Label>
+                <Form.Label>Product Image</Form.Label>
                 <Form.Control 
                   type="file"
                   accept="image/*"
@@ -586,7 +584,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
                       }}
                       disabled={isUploading}
                     >
-                      {t('remove image')}
+                      Remove Image
                     </Button>
                   </div>
                 )}
@@ -596,7 +594,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal} disabled={isUploading}>
-            {t('close')}
+            Close
           </Button>
           <Button 
             variant="primary" 
@@ -605,10 +603,10 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
           >
             {isUploading ? (
               <>
-                <Spinner as="span" animation="border" size="sm" /> {t('uploading')}...
+                <Spinner as="span" animation="border" size="sm" /> Uploading...
               </>
             ) : (
-              t('save')
+              'Save'
             )}
           </Button>
         </Modal.Footer>

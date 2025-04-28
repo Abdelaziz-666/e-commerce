@@ -66,7 +66,7 @@ const SearchBar = ({ products, onResults }) => {
 
       {showDropdown && filteredResults.length === 0 && (
         <div className="position-absolute bg-white border p-2 w-100 z-3 text-muted">
-          لا توجد نتائج
+          No products available
         </div>
       )}
     </div>

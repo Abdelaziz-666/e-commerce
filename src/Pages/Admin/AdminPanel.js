@@ -1,16 +1,14 @@
 import { Container, Table, Button, Modal, Form, Badge } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import AddProduct from './AddProduct';
-import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useProducts } from '../../firebase/hooks/UseProducts';
 import { auth, db } from '../../firebase/Config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import OrdersManagement from './OrdersManagement';
- 
+
 const AdminPanel = () => {
-  const { t } = useTranslation();
   const { products, deleteProduct } = useProducts();
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -82,24 +80,24 @@ const AdminPanel = () => {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="admin-panel">
       <Container className="my-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>{t('admin panel')}</h2>
+          <h2>Admin Panel</h2>
           <Button variant="success" onClick={() => setShowModal(true)}>
-            {t('add product')}
+            Add Product
           </Button>
         </div>
 
         {/* Products Table */}
-        <h3 className="mt-5 mb-3">{t('products')}</h3>
+        <h3 className="mt-5 mb-3">Products</h3>
         <Table striped bordered hover responsive>
           <thead>
             <tr>
-              <th>{t('serial id')}</th>
-              <th>{t('name')}</th>
-              <th>{t('price')}</th>
-              <th>{t('category')}</th>
-              <th>{t('stock')}</th>
-              <th>{t('display location')}</th>
-              <th>{t('actions')}</th>
+              <th>Serial ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Category</th>
+              <th>Stock</th>
+              <th>Display Location</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -110,10 +108,10 @@ const AdminPanel = () => {
                 <td>{product.price}</td>
                 <td>{product.category}</td>
                 <td>{product.inStock}</td>
-                <td>{t(product.displayLocation)}</td>
+                <td>{product.displayLocation}</td>
                 <td>
                   <Button variant="warning" size="sm" onClick={() => handleEditProduct(product)}>
-                    {t('edit')}
+                    Edit
                   </Button>
                   <Button
                     variant="danger"
@@ -121,7 +119,7 @@ const AdminPanel = () => {
                     className="ms-2"
                     onClick={() => deleteProduct(product.id)}
                   >
-                    {t('delete')}
+                    Delete
                   </Button>
                 </td>
               </tr>
@@ -134,13 +132,13 @@ const AdminPanel = () => {
         {/* Edit Product Modal */}
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
           <Modal.Header closeButton>
-            <Modal.Title>{t('edit_product')}</Modal.Title>
+            <Modal.Title>Edit Product</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {selectedProduct && (
               <Form>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('name')}</Form.Label>
+                  <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
                     name="name"
@@ -149,7 +147,7 @@ const AdminPanel = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('price')}</Form.Label>
+                  <Form.Label>Price</Form.Label>
                   <Form.Control
                     type="number"
                     name="price"
@@ -158,7 +156,7 @@ const AdminPanel = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('category')}</Form.Label>
+                  <Form.Label>Category</Form.Label>
                   <Form.Control
                     type="text"
                     name="category"
@@ -167,7 +165,7 @@ const AdminPanel = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('stock')}</Form.Label>
+                  <Form.Label>Stock</Form.Label>
                   <Form.Control
                     type="number"
                     name="inStock"
@@ -176,16 +174,16 @@ const AdminPanel = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('display location')}</Form.Label>
+                  <Form.Label>Display Location</Form.Label>
                   <Form.Control
                     as="select"
                     name="displayLocation"
                     value={selectedProduct.displayLocation}
                     onChange={handleChange}
                   >
-                    <option value="normal">{t('normal')}</option>
-                    <option value="hero">{t('hero')}</option>
-                    <option value="new_arrivals">{t('new_arrivals')}</option>
+                    <option value="normal">Normal</option>
+                    <option value="hero">Hero</option>
+                    <option value="new_arrivals">New Arrivals</option>
                   </Form.Control>
                 </Form.Group>
               </Form>
@@ -193,10 +191,10 @@ const AdminPanel = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-              {t('cancel')}
+              Cancel
             </Button>
             <Button variant="primary" onClick={handleSaveChanges}>
-              {t('save changes')}
+              Save Changes
             </Button>
           </Modal.Footer>
         </Modal>

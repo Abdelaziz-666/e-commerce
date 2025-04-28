@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useTranslation } from "react-i18next";
 import { Button, Card, Col, Row, Badge, Alert, Spinner } from "react-bootstrap";
 import { motion } from "framer-motion";
 import { FaHeart } from "react-icons/fa";
@@ -9,7 +8,6 @@ import { auth } from "../firebase/Config";
 import useFavorites from "../firebase/services/Favorites-service";
 
 const Favorites = () => {
-  const { t } = useTranslation();
   const [user] = useAuthState(auth);
   const { favorites, toggleFavorite, loading } = useFavorites(); 
   const navigate = useNavigate();
@@ -26,11 +24,11 @@ const Favorites = () => {
 
   return (
     <div className="container py-4">
-      <h4 className="mb-4">{t("Favorites")}</h4>
+      <h4 className="mb-4">My Favorites</h4>
       <Row className="justify-content-center g-3">
         {favorites.length === 0 ? (
           <Alert variant="info" className="text-center w-100">
-            {t("Add Some Favorite Itmes")}
+            You haven't added any favorites yet
           </Alert>
         ) : (
           favorites.map((product) => {
@@ -73,7 +71,7 @@ const Favorites = () => {
 
                     {product.inStock <= 0 && (
                       <Badge bg="danger" className="position-absolute top-0 start-0 m-2">
-                        {t("product.out_of_stock")}
+                        Out of stock
                       </Badge>
                     )}
 
@@ -105,7 +103,7 @@ const Favorites = () => {
                           onClick={() => navigate(`/product/${product.id}`)}
                           className="w-100"
                         >
-                          {t("product.view_details")}
+                          View Details
                         </Button>
                       </div>
                     </Card.Body>

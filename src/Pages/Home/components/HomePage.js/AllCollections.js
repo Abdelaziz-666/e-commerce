@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, Card, Col, Row, Badge, Spinner, Alert } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import { doc, getDoc } from 'firebase/firestore';
@@ -11,7 +10,6 @@ import useFavorites from '../../../../firebase/services/Favorites-service';
 import { addToCart } from '../../../../firebase/services/Cart-service';
 
 const AllCollections = ({ products }) => {
-  const { t } = useTranslation();
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
   const { favorites, toggleFavorite, isFavorite, loading: favoritesLoading } = useFavorites();
@@ -54,9 +52,9 @@ const AllCollections = ({ products }) => {
 
     const currentQuantity = quantities[productId] || 0;
 
-    // التحقق من توفر الكمية المطلوبة في المخزون
+    // Check stock availability
     if (currentQuantity >= productToAdd.inStock) {
-      setAlertMessage(`${t('max_stock_reached')} ${productToAdd.inStock}`);
+      setAlertMessage(`Maximum stock reached: ${productToAdd.inStock}`);
       return;
     }
 
@@ -74,9 +72,9 @@ const AllCollections = ({ products }) => {
         [productId]: currentQuantity + 1
       }));
 
-      setAlertMessage(`${t('Added To Cart')}`);
+      setAlertMessage('Added to cart successfully');
     } catch (error) {
-      setAlertMessage(`${t('Error')}`);
+      setAlertMessage('Error adding to cart');
     } finally {
       setLoadingStates(prev => ({ ...prev, [productId]: false }));
     }
@@ -85,7 +83,7 @@ const AllCollections = ({ products }) => {
   const getStockStatus = (product) => {
     if (product.inStock <= 0) {
       return { 
-        text: t('Out of stock'),
+        text: 'Out of stock',
         variant: 'danger',
         disabled: true
       };
@@ -94,14 +92,14 @@ const AllCollections = ({ products }) => {
     const currentQuantity = quantities[product.id] || 0;
     if (currentQuantity >= product.inStock) {
       return {
-        text: `${t('Max available')}: ${product.inStock}`,
+        text: `Max available: ${product.inStock}`,
         variant: 'danger',
         disabled: true
       };
     }
     
     return {
-      text: t('Add to cart'),
+      text: 'Add to cart',
       variant: 'primary',
       disabled: false
     };
@@ -164,7 +162,7 @@ const AllCollections = ({ products }) => {
 
                   {product.inStock <= 0 && (
                     <Badge bg="danger" className="position-absolute top-0 start-0 m-2">
-                      {t('Out of stock')}
+                      Out of stock
                     </Badge>
                   )}
                   {product.inStock > 0 && product.discount > 0 && (
@@ -211,7 +209,7 @@ const AllCollections = ({ products }) => {
                           size="sm"
                           onClick={() => navigate(`/product/${product.id}`)}
                         >
-                          {t('view details')}
+                          View Details
                         </Button>
                       </div>
                     </div>
@@ -226,7 +224,7 @@ const AllCollections = ({ products }) => {
       {products.length > visibleCount && (
         <div className="text-center mt-4">
           <Button variant="dark" onClick={handleShowMore}>
-            {t('show more')}
+            Show More
           </Button>
         </div>
       )}
