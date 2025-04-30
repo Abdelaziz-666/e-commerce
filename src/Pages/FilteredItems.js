@@ -5,7 +5,7 @@ const FilteredItems = ({ products }) => {
   return (
     <div className="product-list">
       {products.length === 0 ? (
-        <p>No products match the filter criteria</p>
+        <p>No products match the filter</p>
       ) : (
         products.map((product, index) => (
           <div key={index} className="product-card">

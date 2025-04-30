@@ -37,7 +37,7 @@ const Favorites = () => {
             const discountedPrice = discount > 0 ? price * (1 - discount / 100) : price;
 
             return (
-              <Col key={product.id || `${product.id}-${product.name}`} xs={10} sm={6} md={4} lg={3}>
+              <Col key={product.id || `${product.id}-${product.name}`} xs={6} sm={6} md={4} lg={3}>
                 <motion.div
                   className="h-100"
                   initial={{ opacity: 0, y: 30 }}
