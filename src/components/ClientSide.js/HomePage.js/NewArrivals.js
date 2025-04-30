@@ -1,6 +1,5 @@
 import React from 'react'
 import { motion } from 'framer-motion';
-
 const NewArrivals = () => {
     const itemVariants = {
         hidden: { opacity: 0, y: 50 },
