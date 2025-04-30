@@ -130,7 +130,7 @@ const AllCollections = ({ products }) => {
           const price = isNaN(discountedPrice) ? 0 : discountedPrice.toFixed(2);
 
           return (
-            <Col key={product.id} xs={10} sm={6} md={4} lg={3}>
+            <Col key={product.id} xs={6} sm={6} md={4} lg={3}>
               <motion.div
                 className="h-100"
                 initial={{ opacity: 0, y: 30 }}

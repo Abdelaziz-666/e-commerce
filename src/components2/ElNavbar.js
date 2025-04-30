@@ -7,9 +7,12 @@ import { useUser } from '../firebase/hooks/UseAuth';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/Config';
+import SearchBar from './SearchBar';
+import { useProducts } from '../firebase/hooks/UseProducts';
 
 const ElNavbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const { products, loading: productsLoading } = useProducts();
   const { user, loading } = useUser();
   const navigate = useNavigate();
   const { total = 0, itemCount = 0 } = useCart(user?.uid);
@@ -79,6 +82,8 @@ const ElNavbar = () => {
             E-Shop
           </Navbar.Brand>
 
+
+
           <div className="d-flex align-items-center">
             <Nav.Link onClick={() => setShowSidebar(true)} className="me-2">
               <FaFilter size={20} />
@@ -93,7 +98,9 @@ const ElNavbar = () => {
             <Nav className="me-auto">
               <Nav.Link onClick={() => navigate('/')}>Home</Nav.Link>
             </Nav>
-
+            <div className="d-flex flex-grow-1 align-items-center justify-content-center mx-2 " style={{height:"55px"}}>
+            <SearchBar products={products} onResults={() => {}} />
+          </div>
             <Nav className="ms-auto d-flex align-items-center">
               <Nav.Link
                 className="position-relative d-flex align-items-center"
