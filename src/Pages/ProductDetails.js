@@ -10,7 +10,8 @@ import {
   Badge,
   Toast,
   ToastContainer,
-  Alert
+  Alert,
+  Form
 } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import { AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart } from 'react-icons/ai';
@@ -32,6 +33,9 @@ const ProductDetails = () => {
   const [quantities, setQuantities] = useState({});
   const [alertMessage, setAlertMessage] = useState(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [mainImage, setMainImage] = useState('');
   
   const { favorites, toggleFavorite } = useFavorites();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -50,6 +54,7 @@ const ProductDetails = () => {
         const data = await getProductById(id);
         if (data) {
           setProduct(data);
+          setMainImage(data.mainImage || data.image || '');
         } else {
           console.error("Product data is missing or invalid");
         }
@@ -110,6 +115,17 @@ const ProductDetails = () => {
     }
   };
 
+  const handleColorSelect = (color) => {
+    setSelectedColor(color);
+    if (color.image) {
+      setMainImage(color.image);
+    }
+  };
+
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+  };
+
   const handleAddToCart = async () => {
     if (!user) {
       navigate('/login');
@@ -121,6 +137,16 @@ const ProductDetails = () => {
       return;
     }
 
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      setAlertMessage('Please select a color');
+      return;
+    }
+
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      setAlertMessage('Please select a size');
+      return;
+    }
+
     const currentQuantity = quantities[product.id] || 0;
     if (currentQuantity >= product.inStock) {
       setAlertMessage('Maximum quantity in stock reached');
@@ -129,13 +155,17 @@ const ProductDetails = () => {
 
     setIsAddingToCart(true);
     try {
-      await addToCart(user.uid, { 
+      const cartItem = { 
         ...product, 
         quantity: currentQuantity + 1,
         price: product.discount 
           ? parseFloat(product.price) * (1 - product.discount / 100)
-          : parseFloat(product.price)
-      });
+          : parseFloat(product.price),
+        selectedColor: selectedColor,
+        selectedSize: selectedSize
+      };
+
+      await addToCart(user.uid, cartItem);
 
       setQuantities(prev => ({
         ...prev,
@@ -219,7 +249,7 @@ const ProductDetails = () => {
         <Row className="g-2">
           <Col md={6} className="text-center mb-2">
             <motion.img
-              src={product.image}
+              src={mainImage}
               alt={product.name}
               className="img-fluid rounded-3 shadow-sm"
               initial={{ scale: 0.9 }}
@@ -231,6 +261,73 @@ const ProductDetails = () => {
                 width: '100%'
               }}
             />
+
+            {/* Colors Selection */}
+            {product.colors && product.colors.length > 0 && (
+              <div className="mt-3">
+                <h6 style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>Colors:</h6>
+                <div className="d-flex flex-wrap gap-2 justify-content-center">
+                  {product.colors.map((color, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className={`rounded-circle border ${selectedColor?.name === color.name ? 'border-primary border-2' : 'border-secondary'}`}
+                      style={{
+                        width: '30px',
+                        height: '30px',
+                        backgroundColor: color.code,
+                        cursor: 'pointer',
+                        position: 'relative'
+                      }}
+                      onClick={() => handleColorSelect(color)}
+                      title={color.name}
+                    >
+                      {selectedColor?.name === color.name && (
+                        <div className="position-absolute top-0 start-100 translate-middle">
+                          <MdCheck size={14} className="text-primary" />
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+                {selectedColor && (
+                  <div className="mt-2 small text-muted">
+                    Selected: {selectedColor.name}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Sizes Selection */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mt-3">
+                <h6 style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>Sizes:</h6>
+                <div className="d-flex flex-wrap gap-2 justify-content-center">
+                  {product.sizes.map((size, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`rounded-pill border ${selectedSize === size ? 'border-primary border-2 bg-primary text-white' : 'border-secondary'}`}
+                      style={{
+                        padding: '0.25rem 0.75rem',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem'
+                      }}
+                      onClick={() => handleSizeSelect(size)}
+                    >
+                      {size}
+                    </motion.div>
+                  ))}
+                </div>
+                {selectedSize && (
+                  <div className="mt-2 small text-muted">
+                    Selected: {selectedSize}
+                  </div>
+                )}
+              </div>
+            )}
           </Col>
 
           <Col md={6}>
@@ -277,28 +374,30 @@ const ProductDetails = () => {
               )}
             </div>
 
-            <Button 
-              variant={isAddingToCart ? 'success' : currentQuantity >= product.inStock ? 'danger' : 'dark'}
-              size="sm" 
-              className="px-3 mt-1 mb-3 d-flex align-items-center gap-1"
-              style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}
-              onClick={handleAddToCart}
-              disabled={isAddingToCart || currentQuantity >= product.inStock || product.inStock <= 0}
-            >
-              {isAddingToCart ? (
-                <>
-                  <Spinner animation="border" size="sm" className="me-1" />
-                  Adding...
-                </>
-              ) : currentQuantity >= product.inStock ? (
-                `Max in stock: ${product.inStock}`
-              ) : (
-                <>
-                  <AiOutlineShoppingCart size={14} />
-                  Add To Cart
-                </>
-              )}
-            </Button>
+            <Form.Group className="mb-3">
+              <Button 
+                variant={isAddingToCart ? 'success' : currentQuantity >= product.inStock ? 'danger' : 'dark'}
+                size="sm" 
+                className="px-3 mt-1 mb-3 d-flex align-items-center gap-1"
+                style={{ fontSize: '0.7rem', padding: '0.25rem 0.5rem' }}
+                onClick={handleAddToCart}
+                disabled={isAddingToCart || currentQuantity >= product.inStock || product.inStock <= 0}
+              >
+                {isAddingToCart ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-1" />
+                    Adding...
+                  </>
+                ) : currentQuantity >= product.inStock ? (
+                  `Max in stock: ${product.inStock}`
+                ) : (
+                  <>
+                    <AiOutlineShoppingCart size={14} />
+                    Add To Cart
+                  </>
+                )}
+              </Button>
+            </Form.Group>
 
             {product.details && product.details.length > 0 && (
               <div className="mt-3">

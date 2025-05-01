@@ -9,6 +9,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/Config';
 import SearchBar from './SearchBar';
 import { useProducts } from '../firebase/hooks/UseProducts';
+import ToggleTheme from '../Pages/Home/components/ToggleTheme';
 
 const ElNavbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -131,6 +132,7 @@ const ElNavbar = () => {
                 <FaHeart size={20} />
               </Nav.Link>
             </Nav>
+            {/* <ToggleTheme/> */}
           </Navbar.Collapse>
         </Container>
       </Navbar>

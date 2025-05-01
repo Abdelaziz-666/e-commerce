@@ -154,7 +154,7 @@ const AllCollections = ({ products }) => {
 
                   <Card.Img
                     variant="top"
-                    src={product.image || fallbackImage}
+                    src={product.mainImage || fallbackImage || product.image}
                     alt={product.name}
                     style={{ height: '200px', objectFit: 'contain' }}
                     onError={(e) => { e.target.src = fallbackImage }}

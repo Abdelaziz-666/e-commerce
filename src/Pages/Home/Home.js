@@ -29,7 +29,7 @@ const Home = () => {
         setProducts(fetchedProducts || []);
         setCategories(fetchedCategories || []);
       } catch (err) {
-        console.error('Error', err);
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
@@ -38,10 +38,29 @@ const Home = () => {
     fetchData();
   }, []);
 
+
+  const heroProducts = products.filter(p => 
+    p?.displayLocations?.includes('hero') || 
+    p?.section === 'hero'
+  );
+
+  const newArrivalsProducts = products.filter(p => 
+    p?.displayLocations?.includes('new_arrivals') || 
+    p?.section === 'new-arrival'
+  );
+
+  const regularProducts = products.filter(p => 
+    !p?.displayLocations?.includes('hero') && 
+    !p?.displayLocations?.includes('new_arrivals') &&
+    p?.section !== 'hero' &&
+    p?.section !== 'new-arrival'
+  );
+
   if (loading) {
     return (
       <Container className="text-center my-5">
-        <Spinner animation="border" />
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-2">Loading products...</p>
       </Container>
     );
   }
@@ -49,18 +68,32 @@ const Home = () => {
   return (
     <div className="home-page">
       <NewArrivals />
-      <NewArrivalsSlider products={products.filter(p => p?.section === 'hero')} />
-      <Categories 
-        categories={categories} 
-       
-      />
-      <NewCollection />
-      <NewCollectionSlider products={products.filter(p => p?.isOnSale)} />
-      <AllCollectionsText />
-      <AllCollections title="all products" products={products} />
-      <Sidebar products = {products} />
+      
 
-   </div>
+      <NewArrivalsSlider 
+        products={heroProducts} 
+        title="Featured Products"
+      />
+      
+      <Categories categories={categories} />
+      
+      <NewCollection />
+      
+
+      <NewCollectionSlider 
+        products={newArrivalsProducts}
+        title="New Arrivals"
+      />
+      
+      <AllCollectionsText />
+      
+      <AllCollections 
+        title="All Products" 
+        products={products} 
+      />
+      
+      <Sidebar products={products} />
+    </div>
   );
 };
 

@@ -50,7 +50,7 @@ const NewArrivalsSlider = ({ products }) => {
                 className='scroll-hidden'
               >
                 <img
-                  src={product.image}
+                  src={ product.mainImage}
                   alt={`Product ${index}`}
                   style={{
                     width: '100%',

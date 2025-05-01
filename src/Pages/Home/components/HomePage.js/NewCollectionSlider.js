@@ -65,7 +65,7 @@ const NewCollectionSlider = ({ products }) => {
 
               >
                 <img
-                  src={product.image}
+                  src={product.mainImage}
                   alt={`Product ${index}`}
                   style={{
                     width: '100%',

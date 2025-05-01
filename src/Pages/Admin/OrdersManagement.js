@@ -245,8 +245,44 @@ const OrdersManagement = () => {
               <div>
                 <p><strong>Customer:</strong> {selectedOrder.fullName}</p>
                 <p><strong>Address:</strong> {selectedOrder.address}</p>
+                <p><strong>paymentMethod</strong> {selectedOrder.paymentMethod}</p>
+                <p><strong>phoneNumber1</strong> {selectedOrder.phoneNumber1}</p>
+                <p><strong>phoneNumber2</strong> {selectedOrder.phoneNumber2}</p>
                 <p><strong>Total Price:</strong> ${selectedOrder.totalPrice?.toFixed(2)}</p>
-                
+                <Table striped bordered hover responsive className="mt-4">
+          <thead className="table-dark">
+            <tr>
+              <th>Name</th>
+              <th>quantity</th>
+              <th>color</th>
+              <th>size</th>
+              <th>price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+            selectedOrder.items.length > 0 ? (
+              selectedOrder.items.map((item , id) => (
+                <tr key={item.id}>
+                  <td>{item.name || 'Unknown'}</td>
+                  <td>{item.quantity}</td>
+                  <td>{item.selectedColor.name}</td>
+                  <td>{item.selectedSize}</td>
+                  <td>${item.price?.toFixed(2) || '0.00'}</td>
+                  <td>
+         
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center">
+                  No items found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>                
                 <div className="mb-3">
                   <label className="form-label">Status</label>
                   <select

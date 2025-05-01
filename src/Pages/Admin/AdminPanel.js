@@ -48,7 +48,10 @@ const AdminPanel = () => {
   }, [role, loading, navigate]);
 
   const handleEditProduct = (product) => {
-    setSelectedProduct({ ...product });
+    setSelectedProduct({ 
+      ...product,
+      displayLocations: product.displayLocations || ['normal']
+    });
     setShowEditModal(true);
   };
 
@@ -60,7 +63,7 @@ const AdminPanel = () => {
         price: selectedProduct.price || 0,
         category: selectedProduct.category || '',
         inStock: selectedProduct.inStock || 0,
-        displayLocation: selectedProduct.displayLocation || 'normal',
+        displayLocations: selectedProduct.displayLocations || ['normal'],
       });
       setShowEditModal(false);
     }
@@ -96,7 +99,7 @@ const AdminPanel = () => {
               <th>Price</th>
               <th>Category</th>
               <th>Stock</th>
-              <th>Display Location</th>
+              <th>Display Locations</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -108,7 +111,7 @@ const AdminPanel = () => {
                 <td>{product.price}</td>
                 <td>{product.category}</td>
                 <td>{product.inStock}</td>
-                <td>{product.displayLocation}</td>
+                <td>{product.displayLocations?.join(', ') || 'normal'}</td>
                 <td>
                   <Button variant="warning" size="sm" onClick={() => handleEditProduct(product)}>
                     Edit
@@ -174,17 +177,31 @@ const AdminPanel = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>Display Location</Form.Label>
-                  <Form.Control
-                    as="select"
-                    name="displayLocation"
-                    value={selectedProduct.displayLocation}
-                    onChange={handleChange}
-                  >
-                    <option value="normal">Normal</option>
-                    <option value="hero">Hero</option>
-                    <option value="new_arrivals">New Arrivals</option>
-                  </Form.Control>
+                  <Form.Label>Display Locations</Form.Label>
+                  <div className="border p-3 rounded mb-2">
+                    {['normal', 'hero', 'new_arrivals'].map((location) => (
+                      <Form.Check 
+                        key={location}
+                        type="checkbox"
+                        id={`location-${location}`}
+                        label={
+                          location === 'normal' ? 'Normal' : 
+                          location === 'hero' ? 'Hero Section' : 
+                          'New Arrivals'
+                        }
+                        checked={selectedProduct.displayLocations?.includes(location)}
+                        onChange={(e) => {
+                          const isChecked = e.target.checked;
+                          setSelectedProduct(prev => ({
+                            ...prev,
+                            displayLocations: isChecked
+                              ? [...(prev.displayLocations || []), location]
+                              : (prev.displayLocations || []).filter(l => l !== location)
+                          }));
+                        }}
+                      />
+                    ))}
+                  </div>
                 </Form.Group>
               </Form>
             )}
