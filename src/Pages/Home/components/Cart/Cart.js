@@ -97,7 +97,7 @@ const Cart = ({ userId }) => {
                 <td>
                   <div className="d-flex align-items-center">
                     <img 
-                      src={item.image} 
+                      src={item.mainImage} 
                       alt={item.name} 
                       width="60" 
                       height="60"
