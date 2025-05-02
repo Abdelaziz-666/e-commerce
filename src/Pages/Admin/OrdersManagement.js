@@ -52,7 +52,16 @@ const OrdersManagement = () => {
   }, [ordersError]);
 
   const handleEditOrder = (order) => {
-    setSelectedOrder(order);
+    const safeOrder = {
+      ...order,
+      items: order.items?.map(item => ({
+        ...item,
+        selectedColor: item.selectedColor || { name: 'N/A', code: '' },
+        selectedSize: item.selectedSize || 'N/A'
+      })) || []
+    };
+    
+    setSelectedOrder(safeOrder);
     setShowOrderModal(true);
     setAlert(prev => ({ ...prev, show: false }));
   };

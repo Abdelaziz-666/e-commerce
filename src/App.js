@@ -13,6 +13,7 @@ import FavoritesWrapper from './Pages/Home/components/FavoritesWrapper';
 import ProductDetails from './Pages/ProductDetails';
 import Checkout from './Pages/Home/components/Cart/CheckOutPage';
 import ProfilePage from './Pages/ProfilePage';
+import CategoryProducts from './Pages/Home/components/HomePage.js/CategoryProducts';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/checkout" element={<Checkout/>} />
         <Route path="/profile" element={<ProfilePage />} />
-
+        <Route path="/category-products" element={<CategoryProducts />} />
       </Routes>
     </Router>
   );

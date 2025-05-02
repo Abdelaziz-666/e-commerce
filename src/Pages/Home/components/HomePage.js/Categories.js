@@ -2,8 +2,11 @@ import React from 'react';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
-const Categories = ({ categories }) => {
+const Categories = ({ categories, products }) => {
+    const navigate = useNavigate();
+    
     const itemVariants = {
         hidden: { opacity: 0, y: 50 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -15,6 +18,21 @@ const Categories = ({ categories }) => {
                icon.startsWith('data:image'));
     };
 
+    const handleCategoryClick = (categoryName) => {
+        const filteredProducts = products.filter(product => 
+            product.category === categoryName
+        );
+        
+        navigate('/category-products', {
+            state: {
+                categoryName,
+                filteredProducts
+            }
+        });
+        
+
+    };
+
     return (
         <motion.div
             variants={itemVariants}
@@ -23,7 +41,7 @@ const Categories = ({ categories }) => {
             viewport={{ once: true, amount: 0.2 }}
         >
             <div className="container my-5">
-                <h3 className="mb-3c">Categories</h3>
+                <h3 className="mb-3">Categories</h3>
                 <Splide
                     options={{
                         type: 'loop',
@@ -47,7 +65,11 @@ const Categories = ({ categories }) => {
                 >
                     {categories.map((cat) => (
                         <SplideSlide key={cat.id} className="d-flex justify-content-center">
-                            <div className="categorySlider card text-center p-3 shadow-sm">
+                            <div 
+                                className="categorySlider card text-center p-3 shadow-sm"
+                                onClick={() => handleCategoryClick(cat.name)}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <div style={{ fontSize: '2rem', minHeight: '48px' }}>
                                     {isImageUrl(cat.icon) ? (
                                         <img 

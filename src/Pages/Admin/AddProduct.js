@@ -10,7 +10,7 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
     originalPrice: '',
     discount: 0,
     category: '',
-    sections: ['regular'],
+    displayLocations: ['normal'],
     mainImage: null,
     colors: [],
     sizes: [],
@@ -753,33 +753,32 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
               </Form.Group>
               
               <Form.Group className="mb-3">
-  <Form.Label>Sections</Form.Label>
-  <div className="border p-3 rounded mb-2">
-    {['regular', 'new-arrival', 'hero'].map((section) => (
-      <Form.Check 
-        key={section}
-        type="checkbox"
-        id={`section-${section}`}
-        label={
-          section === 'regular' ? 'Regular' : 
-          section === 'new-arrival' ? 'New Arrival' : 
-          'Hero Section'
-        }
-        checked={newProduct.sections.includes(section)}
-        onChange={(e) => {
-          const isChecked = e.target.checked;
-          setNewProduct(prev => ({
-            ...prev,
-            sections: isChecked
-              ? [...prev.sections, section]
-              : prev.sections.filter(s => s !== section)
-          }));
-        }}
-      />
-    ))}
-  </div>
-</Form.Group>
-              
+                <Form.Label>Display Locations</Form.Label>
+                <div className="border p-3 rounded mb-2">
+                  {['normal', 'hero', 'new_arrivals'].map((location) => (
+                    <Form.Check 
+                      key={location}
+                      type="checkbox"
+                      id={`location-${location}`}
+                      label={
+                        location === 'normal' ? 'Normal' : 
+                        location === 'hero' ? 'Hero Section' : 
+                        'New Arrivals'
+                      }
+                      checked={newProduct.displayLocations.includes(location)}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setNewProduct(prev => ({
+                          ...prev,
+                          displayLocations: isChecked
+                            ? [...prev.displayLocations, location]
+                            : prev.displayLocations.filter(l => l !== location)
+                        }));
+                      }}
+                    />
+                  ))}
+                </div>
+              </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Main Product Image *</Form.Label>
                 <Form.Control 

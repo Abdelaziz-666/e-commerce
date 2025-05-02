@@ -2,8 +2,10 @@ import React from 'react';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const NewCollectionSlider = ({ products }) => {
+  const navigate = useNavigate();
   const itemVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -33,7 +35,10 @@ const NewCollectionSlider = ({ products }) => {
           {products?.map((product, index) => (
             <SplideSlide key={index}>
               <div className="product-card">
-                <div className="image-wrapper-fixed">
+                <div className="image-wrapper-fixed"
+                  onClick={() => navigate(`/product/${product.id}`)}
+
+                >
                   <img
                     src={product.mainImage || 'https://via.placeholder.com/300'}
                     alt={`Product ${index}`}

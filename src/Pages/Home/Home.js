@@ -73,8 +73,7 @@ const Home = () => {
         title="Featured Products"
       />
       
-      <Categories categories={categories} />
-      
+      <Categories categories={categories} products={products} />      
       <NewCollection />
       
 

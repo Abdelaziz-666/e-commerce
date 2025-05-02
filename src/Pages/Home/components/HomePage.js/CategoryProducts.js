@@ -1,0 +1,257 @@
+import React, { useState, useEffect } from 'react';
+import { Button, Card, Col, Row, Badge, Spinner, Alert, Container } from 'react-bootstrap';
+import { motion } from 'framer-motion';
+import { doc, getDoc } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { auth, db } from '../../../../firebase/Config';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import useFavorites from '../../../../firebase/services/Favorites-service';
+import { addToCart } from '../../../../firebase/services/Cart-service';
+
+const CategoryProducts = () => {
+  const location = useLocation();
+  const [user] = useAuthState(auth);
+  const navigate = useNavigate();
+  const { favorites, toggleFavorite, isFavorite, loading: favoritesLoading } = useFavorites();
+
+  const [visibleCount, setVisibleCount] = useState(8);
+  const [loadingStates, setLoadingStates] = useState({});
+  const [quantities, setQuantities] = useState({});
+  const [alertMessage, setAlertMessage] = useState(null);
+  const fallbackImage = "/images/no-image.png";
+
+  const { categoryName, filteredProducts } = location.state || {};
+  const products = filteredProducts || [];
+
+  const handleShowMore = () => setVisibleCount(prev => prev + 8);
+
+  const fetchQuantities = async () => {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const userDoc = await getDoc(userRef);
+    const userData = userDoc.exists() ? userDoc.data() : {};
+    const cart = userData.cart || [];
+
+    const updatedQuantities = {};
+    for (let product of products) {
+      const item = cart.find(i => i.id === product.id);
+      updatedQuantities[product.id] = item ? item.quantity : 0;
+    }
+    setQuantities(updatedQuantities);
+  };
+
+  useEffect(() => {
+    if (user) fetchQuantities();
+  }, [user, products]);
+
+  const handleAddToCart = async (productId, discountedPrice) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    const productToAdd = products.find(p => p.id === productId);
+    if (!productToAdd || !productToAdd.id) return;
+
+    const currentQuantity = quantities[productId] || 0;
+
+    if (currentQuantity >= productToAdd.inStock) {
+      setAlertMessage(`Maximum stock reached: ${productToAdd.inStock}`);
+      return;
+    }
+
+    setLoadingStates(prev => ({ ...prev, [productId]: true }));
+
+    try {
+      await addToCart(user.uid, {
+        ...productToAdd,
+        quantity: currentQuantity + 1,
+        price: discountedPrice
+      });
+
+      setQuantities(prev => ({
+        ...prev,
+        [productId]: currentQuantity + 1
+      }));
+
+      setAlertMessage('Added to cart successfully');
+    } catch (error) {
+      setAlertMessage('Error adding to cart');
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const getStockStatus = (product) => {
+    if (product.inStock <= 0) {
+      return { 
+        text: 'Out of stock',
+        variant: 'danger',
+        disabled: true
+      };
+    }
+    
+    const currentQuantity = quantities[product.id] || 0;
+    if (currentQuantity >= product.inStock) {
+      return {
+        text: `Max available: ${product.inStock}`,
+        variant: 'danger',
+        disabled: true
+      };
+    }
+    
+    return {
+      text: 'Add to cart',
+      variant: 'primary',
+      disabled: false
+    };
+  };
+
+  if (!categoryName) {
+    return (
+      <Container className="my-5 text-center">
+        <Alert variant="warning">No category selected</Alert>
+        <Button variant="primary" onClick={() => navigate('/')}>
+          Go back to home
+        </Button>
+      </Container>
+    );
+  }
+
+  return (
+    <Container className="my-5">
+      <h2 className="mb-4">Products in {categoryName}</h2>
+      
+      {favoritesLoading && (
+        <div className="text-center py-3">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      )}
+
+      {alertMessage && (
+        <Alert variant={alertMessage.includes('error') ? 'danger' : 'success'} onClose={() => setAlertMessage(null)} dismissible>
+          {alertMessage}
+        </Alert>
+      )}
+
+      {products.length === 0 ? (
+        <Alert variant="info">No products found in this category</Alert>
+      ) : (
+        <>
+          <Row className="justify-content-center g-3">
+            {products.slice(0, visibleCount).map((product) => {
+              const loading = loadingStates[product.id];
+              const stockStatus = getStockStatus(product);
+              const discountedPrice = product.discount
+                ? parseFloat(product.price) * (1 - product.discount / 100)
+                : parseFloat(product.price);
+
+              const price = isNaN(discountedPrice) ? 0 : discountedPrice.toFixed(2);
+
+              return (
+                <Col key={product.id} xs={6} sm={6} md={4} lg={3}>
+                  <motion.div
+                    className="h-100"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Card className="shadow-sm h-100 border-0 position-relative">
+                      <Button
+                        variant="link"
+                        className="position-absolute top-0 end-0 m-2 p-0"
+                        onClick={() => toggleFavorite(product)}
+                        disabled={favoritesLoading}
+                        style={{ zIndex: 5 }}
+                      >
+                        {isFavorite(product.id) ? (
+                          <FaHeart style={{ color: 'red', fontSize: '1.4rem' }} />
+                        ) : (
+                          <FaRegHeart style={{ color: '#000', fontSize: '1.4rem', textShadow: '0 0 3px #000'}} />
+                        )}
+                      </Button>
+
+                      <Card.Img
+                        variant="top"
+                        src={product.mainImage || fallbackImage || product.image}
+                        alt={product.name}
+                        style={{ height: '200px', objectFit: 'contain' }}
+                        onError={(e) => { e.target.src = fallbackImage }}
+                      />
+
+                      {product.inStock <= 0 && (
+                        <Badge bg="danger" className="position-absolute top-0 start-0 m-2">
+                          Out of stock
+                        </Badge>
+                      )}
+                      {product.inStock > 0 && product.discount > 0 && (
+                        <Badge bg="success" className="position-absolute top-0 start-0 m-2">
+                          {product.discount}% OFF
+                        </Badge>
+                      )}
+
+                      <Card.Body className="d-flex flex-column">
+                        <Card.Title className="fs-6 text-truncate">{product.name}</Card.Title>
+                        <Card.Text className="text-muted mb-1">{product.size}</Card.Text>
+                        <div className="mt-auto">
+                          <div className="mb-2">
+                            {product.discount > 0 ? (
+                              <>
+                                <span className="text-muted text-decoration-line-through me-2">
+                                  {parseFloat(product.price).toFixed(2)}$
+                                </span>
+                                <span className="text-danger fw-bold">
+                                  {price}$
+                                </span>
+                              </>
+                            ) : (
+                              <span className="fw-bold">{price}$</span>
+                            )}
+                          </div>
+
+                          <div className="d-flex gap-2">
+                            <Button
+                              variant={loading ? 'success' : stockStatus.variant}
+                              size="sm"
+                              onClick={() => handleAddToCart(product.id, discountedPrice)}
+                              disabled={loading || stockStatus.disabled}
+                              className="flex-grow-1"
+                            >
+                              {loading ? (
+                                <Spinner size="sm" animation="border" />
+                              ) : (
+                                stockStatus.text
+                              )}
+                            </Button>
+                            <Button
+                              variant="outline-secondary"
+                              size="sm"
+                              onClick={() => navigate(`/product/${product.id}`)}
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </motion.div>
+                </Col>
+              );
+            })}
+          </Row>
+
+          {products.length > visibleCount && (
+            <div className="text-center mt-4">
+              <Button variant="dark" onClick={handleShowMore}>
+                Show More
+              </Button>
+            </div>
+          )}
+        </>
+      )}
+    </Container>
+  );
+};
+
+export default CategoryProducts;

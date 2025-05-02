@@ -53,13 +53,13 @@ const useFavorites = () => {
         });
         setFavorites(favorites.filter(fav => fav.id !== product.id));
       } else {
-        const { id, name, price, image } = product;
+        const { id, name, price, mainImage } = product;
         if (id && name && price !== undefined) {
           const newFavorite = { 
             id, 
             name, 
             price, 
-            image: image || '/images/no-image.png',
+            mainImage: mainImage || '/images/no-image.png',
             // Add any other necessary fields
           };
           await updateDoc(userRef, {
@@ -85,7 +85,7 @@ export const addToFavorites = async (userId, product) => {
       id: product.id || Date.now(),  
       name: product.name,
       price: product.price,
-      image: product.image || '/images/no-image.png'
+      mainImage: product.mainImage || '/images/no-image.png'
     };
 
     await updateDoc(userRef, {
