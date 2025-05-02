@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaShoppingCart, FaHeart, FaFilter, FaUser } from 'react-icons/fa';
+import { FaShoppingCart, FaHeart, FaFilter, FaUser, FaSearch } from 'react-icons/fa';
 import { Navbar, Container, Nav, Dropdown, Badge } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { useCart } from '../firebase/hooks/UseCart';
@@ -9,11 +9,11 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/Config';
 import SearchBar from './SearchBar';
 import { useProducts } from '../firebase/hooks/UseProducts';
-import ToggleTheme from '../Pages/Home/components/ToggleTheme';
 
 const ElNavbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
-  const { products, loading: productsLoading } = useProducts();
+  const [showSearch, setShowSearch] = useState(false);
+  const { products } = useProducts();
   const { user, loading } = useUser();
   const navigate = useNavigate();
   const { total = 0, itemCount = 0 } = useCart(user?.uid);
@@ -31,31 +31,20 @@ const ElNavbar = () => {
     if (loading) return null;
 
     if (user) {
-      const displayName = user.displayName || '';
-      const firstChar = displayName
-        ? displayName.charAt(0).toUpperCase()
-        : (user.email?.charAt(0).toUpperCase() || 'U');
-
       return (
-        <Dropdown align="end" className="mx-2">
+        <Dropdown align="end">
           <Dropdown.Toggle
             variant="link"
             id="user-dropdown"
-            className="user-icon d-flex align-items-center justify-content-center "
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: '2px solid black',
-              backgroundColor: '#f0f0f0',
-              color: 'black',
-              fontSize: '18px',
-              fontWeight: 'bold',
+              padding: 0,
+              border: 'none',
+              background: 'transparent',
+              color: '#000'
             }}
           >
-            {firstChar}
+            <FaUser size={20} />
           </Dropdown.Toggle>
-
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => navigate('/profile')}>Profile</Dropdown.Item>
             <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
@@ -64,9 +53,11 @@ const ElNavbar = () => {
       );
     } else {
       return (
-        <Nav.Link onClick={() => navigate('/login')} className="ms-2">
-          <FaUser size={20} />
-        </Nav.Link>
+        <FaUser
+          size={20}
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/login')}
+        />
       );
     }
   };
@@ -77,66 +68,56 @@ const ElNavbar = () => {
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-tertiary sticky-top" bg="light" variant="light">
-        <Container fluid>
-          <Navbar.Brand onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-            E-Shop
+      <Navbar expand="lg" className="navbar sticky-top py-2" bg="white" variant="light">
+        <Container fluid className="d-flex justify-content-between align-items-center px-3">
+          {/* Left Icons */}
+          <div className="d-flex align-items-center gap-3">
+            <FaFilter style={{ cursor: 'pointer' }} onClick={() => setShowSidebar(true)} />
+            <FaSearch style={{ cursor: 'pointer' }} onClick={() => setShowSearch(prev => !prev)} />
+          </div>
+
+          {/* Center Logo */}
+          <Navbar.Brand
+            onClick={() => navigate('/')}
+            style={{
+              fontWeight: 'bold',
+              fontSize: '1.5rem',
+              letterSpacing: '1px',
+              cursor: 'pointer'
+            }}
+          >
+            LOGO
           </Navbar.Brand>
 
-
-
-          <div className="d-flex align-items-center">
-            <Nav.Link onClick={() => setShowSidebar(true)} className="me-2">
-              <FaFilter size={20} />
-            </Nav.Link>
-
+          {/* Right Icons */}
+          <div className="d-flex align-items-center gap-3">
             {renderUserIcon()}
-
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <FaHeart style={{ cursor: 'pointer' }} onClick={() => navigate('/favorites')} />
+            <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/cart')}>
+              <FaShoppingCart />
+              {itemCount > 0 && (
+                <Badge
+                  pill
+                  bg="dark"
+                  className="position-absolute top-0 start-100 translate-middle"
+                  style={{ fontSize: '0.6rem' }}
+                >
+                  {itemCount}
+                </Badge>
+              )}
+            </div>
           </div>
+        </Container>
 
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link onClick={() => navigate('/')}>Home</Nav.Link>
-            </Nav>
-            <div className="d-flex flex-grow-1 align-items-center justify-content-center mx-2 " style={{height:"55px"}}>
+        {/* Search Bar */}
+        {showSearch && (
+          <div className="w-100 px-4 mt-2">
             <SearchBar products={products} onResults={() => {}} />
           </div>
-            <Nav className="ms-auto d-flex align-items-center">
-              <Nav.Link
-                className="position-relative d-flex align-items-center"
-                onClick={() => navigate('/cart')}
-                style={{ cursor: 'pointer' }}
-              >
-                <FaShoppingCart size={20} />
-                {itemCount > 0 && (
-                  <Badge
-                    pill
-                    bg="danger"
-                    className="position-absolute top-0 start-100 translate-middle"
-                    style={{ fontSize: '0.6rem' }}
-                  >
-                    {itemCount}
-                  </Badge>
-                )}
-                <span className="ms-2" style={{ fontSize: '0.9rem' }}>
-                  ${total.toFixed(2)}
-                </span>
-              </Nav.Link>
-
-              <Nav.Link
-                className="ms-3"
-                onClick={() => navigate('/favorites')}
-                style={{ cursor: 'pointer' }}
-              >
-                <FaHeart size={20} />
-              </Nav.Link>
-            </Nav>
-            {/* <ToggleTheme/> */}
-          </Navbar.Collapse>
-        </Container>
+        )}
       </Navbar>
 
+      {/* Sidebar */}
       <Sidebar
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}

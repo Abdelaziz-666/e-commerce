@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Spinner, Container } from 'react-bootstrap';
 import { getProducts, getCategories } from '../../firebase/services/Product-service';
 import NewArrivalsSlider from './components/HomePage.js/NewArrivalsSlider';
-import NewArrivals from './components/HomePage.js/NewArrivals';
 import Categories from './components/HomePage.js/Categories';
 import NewCollection from './components/HomePage.js/NewCollection';
 import NewCollectionSlider from './components/HomePage.js/NewCollectionSlider';
@@ -41,13 +40,13 @@ const Home = () => {
 
   const heroProducts = products.filter(p => 
     p?.displayLocations?.includes('hero') || 
-    p?.section === 'hero'
-  );
+    p?.sections?.includes( 'hero')
+    );
 
   const newArrivalsProducts = products.filter(p => 
     p?.displayLocations?.includes('new_arrivals') || 
-    p?.section === 'new-arrival'
-  );
+    p?.sections?.includes( 'new-arrivals')
+    );
 
   const regularProducts = products.filter(p => 
     !p?.displayLocations?.includes('hero') && 
@@ -67,7 +66,6 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      <NewArrivals />
       
 
       <NewArrivalsSlider 

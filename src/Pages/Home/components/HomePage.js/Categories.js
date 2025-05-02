@@ -23,7 +23,7 @@ const Categories = ({ categories }) => {
             viewport={{ once: true, amount: 0.2 }}
         >
             <div className="container my-5">
-                <h3 className="mb-3">Categories</h3>
+                <h3 className="mb-3c">Categories</h3>
                 <Splide
                     options={{
                         type: 'loop',
@@ -54,8 +54,8 @@ const Categories = ({ categories }) => {
                                             src={cat.icon} 
                                             alt={cat.name} 
                                             style={{ 
-                                                width: '48px', 
-                                                height: '48px',
+                                                width: '90px', 
+                                                height: '90px',
                                                 objectFit: 'contain'
                                             }} 
                                         />

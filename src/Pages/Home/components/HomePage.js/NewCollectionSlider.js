@@ -16,62 +16,30 @@ const NewCollectionSlider = ({ products }) => {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
-      <div
-        className="container mt-5"
-        style={{
-          maxWidth: '100vw',
-          overflow: 'hidden',
-          padding: 0,
-        }}
-      >
+      <div className="slider-container">
         <Splide
           options={{
             type: 'loop',
-            autoplay: true,
-            interval: 3000,
-            arrows: true,
-            pagination: true,
-            perPage: 1,
-            focus: 'center',
-            gap: 0,
+            perPage: 3,
+            gap: '1rem',
+            arrows: false,
+            pagination: false,
             breakpoints: {
-              768: {
-                perPage: 1,
-              },
-              1024: {
-                perPage: 1,
-              },
-            }
+              768: { perPage: 2 },
+              480: { perPage: 1 },
+            },
           }}
-          aria-label="New Collection"
-          style={{ maxWidth: '100%', margin: '0 auto' }}
         >
           {products?.map((product, index) => (
-            <SplideSlide
-              key={index}
-              className="d-flex justify-content-center"
-              style={{ maxWidth: '100vw' }}
-            >
-              <div
-                style={{
-                  width: '100%',
-                  maxHeight: '50vh',
-                  overflowY: 'auto',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-                className='scroll-hidden'
-
-              >
-                <img
-                  src={product.mainImage}
-                  alt={`Product ${index}`}
-                  style={{
-                    width: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
+            <SplideSlide key={index}>
+              <div className="product-card">
+                <div className="image-wrapper-fixed">
+                  <img
+                    src={product.mainImage || 'https://via.placeholder.com/300'}
+                    alt={`Product ${index}`}
+                    className="slider-image"
+                  />
+                </div>
               </div>
             </SplideSlide>
           ))}

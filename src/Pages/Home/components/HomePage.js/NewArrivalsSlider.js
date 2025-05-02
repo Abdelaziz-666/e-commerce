@@ -15,18 +15,23 @@ const NewArrivalsSlider = ({ products }) => {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
+      style={{
+        position: 'relative',
+        top: '-60px', // لرفع الصورة قليلًا لتدخل على النافبار
+        zIndex: 1,
+      }}
     >
       <div
-        className="container-fluid p-0 mt-5 "
+        className="container-fluid p-0"
         style={{ maxWidth: '100vw', overflow: 'hidden' }}
       >
         <Splide
           options={{
             type: 'loop',
             autoplay: true,
-            interval: 3000,
-            arrows: true,
-            pagination: true,
+            interval: 4000,
+            arrows: false,
+            pagination: false,
             perPage: 1,
             gap: 0,
           }}
@@ -41,30 +46,31 @@ const NewArrivalsSlider = ({ products }) => {
               <div
                 style={{
                   width: '100%',
-                  maxHeight: '50vh',
-                  overflowY: 'auto',
+                  height: '85vh', // ارتفاع كبير لتملأ الشاشة
+                  overflow: 'hidden',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                className='scroll-hidden'
               >
-                <img
-                  src={ product.mainImage}
+                <motion.img
+                  src={product.mainImage}
                   alt={`Product ${index}`}
+                  initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6, ease: 'easeInOut' }}
                   style={{
                     width: '100%',
+                    height: '100%',
                     objectFit: 'cover',
+                    borderRadius: '0 0 2rem 2rem',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
                   }}
                 />
               </div>
             </SplideSlide>
           ))}
         </Splide>
-
-        <div className="sliderProgress">
-          <div className="sliderBar mt-1" style={{ width: '100%' }}></div>
-        </div>
       </div>
     </motion.div>
   );
