@@ -9,7 +9,7 @@ const FilteredItems = ({ products }) => {
       ) : (
         products.map((product, index) => (
           <div key={index} className="product-card">
-            <img src={product.image} alt={product.name} />
+            <img src={product.mainImage} alt={product.name} />
             <h3>{product.name}</h3>
             <p>Price: ${product.price}</p>
           </div>
