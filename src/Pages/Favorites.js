@@ -61,7 +61,7 @@ const Favorites = () => {
 
                     <Card.Img
                       variant="top"
-                      src={product.image || fallbackImage}
+                      src={product.mainImage || fallbackImage}
                       alt={product.name}
                       style={{ height: "200px", objectFit: "contain" }}
                       onError={(e) => {
