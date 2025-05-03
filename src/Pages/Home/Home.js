@@ -10,6 +10,9 @@ import AllCollections from './components/HomePage.js/AllCollections';
 import Sidebar from '../../components2/Sidebar';
 import Favorites from '../Favorites';
 
+// ✅ استدعاء الفوتر
+import Footer from './components/HomePage.js/Footer';
+
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -37,16 +40,15 @@ const Home = () => {
     fetchData();
   }, []);
 
-
   const heroProducts = products.filter(p => 
     p?.displayLocations?.includes('hero') || 
-    p?.sections?.includes( 'hero')
-    );
+    p?.sections?.includes('hero')
+  );
 
   const newArrivalsProducts = products.filter(p => 
     p?.displayLocations?.includes('new_arrivals') || 
-    p?.sections?.includes( 'new-arrivals')
-    );
+    p?.sections?.includes('new-arrivals')
+  );
 
   const regularProducts = products.filter(p => 
     !p?.displayLocations?.includes('hero') && 
@@ -66,8 +68,6 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      
-
       <NewArrivalsSlider 
         products={heroProducts} 
         title="Featured Products"
@@ -76,7 +76,6 @@ const Home = () => {
       <Categories categories={categories} products={products} />      
       <NewCollection />
       
-
       <NewCollectionSlider 
         products={newArrivalsProducts}
         title="New Arrivals"
@@ -90,6 +89,9 @@ const Home = () => {
       />
       
       <Sidebar products={products} />
+
+      {/* ✅ إضافة الفوتر هنا */}
+      <Footer />
     </div>
   );
 };

@@ -262,7 +262,6 @@ const ProductDetails = () => {
               }}
             />
 
-            {/* Colors Selection */}
             {product.colors && product.colors.length > 0 && (
               <div className="mt-3">
                 <h6 style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>Colors:</h6>
@@ -299,7 +298,6 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {/* Sizes Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="mt-3">
                 <h6 style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>Sizes:</h6>

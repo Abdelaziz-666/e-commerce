@@ -17,7 +17,7 @@ const NewArrivalsSlider = ({ products }) => {
       viewport={{ once: true, amount: 0.2 }}
       style={{
         position: 'relative',
-        top: '-60px', // لرفع الصورة قليلًا لتدخل على النافبار
+        top: '-60px',
         zIndex: 1,
       }}
     >
@@ -36,21 +36,18 @@ const NewArrivalsSlider = ({ products }) => {
             gap: 0,
           }}
           aria-label="New Arrivals"
-          style={{
-            maxWidth: '100%',
-            margin: '0 auto',
-          }}
+          style={{ width: '100vw', margin: '0 auto' }}
         >
           {products?.map((product, index) => (
             <SplideSlide key={index}>
               <div
                 style={{
-                  width: '100%',
-                  height: '85vh', // ارتفاع كبير لتملأ الشاشة
-                  overflow: 'hidden',
+                  width: '100vw',
+                  height: 'auto',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  backgroundColor: '#fff',
                 }}
               >
                 <motion.img
@@ -60,11 +57,12 @@ const NewArrivalsSlider = ({ products }) => {
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.6, ease: 'easeInOut' }}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    width: '100vw',
+                    height: 'auto',
+                    objectFit: 'contain',
                     borderRadius: '0 0 2rem 2rem',
                     boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
+                    backgroundColor: '#fff',
                   }}
                 />
               </div>

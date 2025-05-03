@@ -52,7 +52,7 @@ const NewCollection = () => {
           variants={textVariants}
           style={{ display: 'inline-block' }}
         >
-          New Collection
+         All products
           <motion.span
             variants={underlineVariants}
             style={{
