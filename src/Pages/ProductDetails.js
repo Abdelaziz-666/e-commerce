@@ -198,7 +198,7 @@ const ProductDetails = () => {
 
   const currentQuantity = quantities[product.id] || 0;
   const discountedPrice = product.discount
-    ? parseFloat(product.price) * (1 - product.discount / 100)
+    ? parseFloat(product.originalPrice) * (1 - product.discount / 100)
     : parseFloat(product.price);
   const price = isNaN(discountedPrice) ? 0 : discountedPrice.toFixed(2);
 
