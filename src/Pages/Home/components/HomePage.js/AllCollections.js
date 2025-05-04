@@ -179,10 +179,11 @@ const AllCollections = ({ products }) => {
                         {product.discount > 0 ? (
                           <>
                             <span className="text-muted text-decoration-line-through me-2">
-                              {parseFloat(product.price).toFixed(2)}$
+                              {product.originalPrice}$
                             </span>
                             <span className="text-danger fw-bold">
-                              {price}$
+                              
+                    {parseFloat(product.price).toFixed(2)}$
                             </span>
                           </>
                         ) : (
