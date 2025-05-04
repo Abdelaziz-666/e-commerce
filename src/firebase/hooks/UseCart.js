@@ -40,7 +40,7 @@ export const useCart = (userId) => {
             .map(item => ({
               id: item.id,
               name: item.name || 'Unnamed Product',
-              price: Number(item.price) || 0,
+              price: parseFloat(item.price).toFixed(2) || 0,
               quantity: Number(item.quantity) || 1,
               image: item.image || '/images/no-image.png',
               inStock: Number(item.inStock) || 0,
