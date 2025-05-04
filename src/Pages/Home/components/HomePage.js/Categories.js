@@ -76,8 +76,8 @@ const Categories = ({ categories, products }) => {
                                             src={cat.icon} 
                                             alt={cat.name} 
                                             style={{ 
-                                                width: '90px', 
-                                                height: '90px',
+                                                width: '110px', 
+                                                height: '110px',
                                                 objectFit: 'contain'
                                             }} 
                                         />

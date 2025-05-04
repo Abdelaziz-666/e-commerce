@@ -63,6 +63,8 @@ const NewArrivalsSlider = ({ products }) => {
                     borderRadius: '0 0 2rem 2rem',
                     boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
                     backgroundColor: '#fff',
+                    
+
                   }}
                 />
               </div>

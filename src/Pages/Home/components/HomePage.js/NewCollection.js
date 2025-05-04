@@ -61,7 +61,7 @@ const NewCollection = () => {
               left: 0,
               width: '100%',
               height: '2px',
-              background: 'linear-gradient(90deg,rgb(63, 86, 102),rgb(89, 137, 182))',
+              background: 'linear-gradient(90deg,rgb(76, 110, 85),rgba(52, 107, 70, 0.55))',
             }}
           />
         </motion.span>

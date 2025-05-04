@@ -192,11 +192,14 @@ const AllCollections = ({ products }) => {
 
                       <div className="d-flex gap-2">
                         <Button
-                          variant={loading ? 'success' : stockStatus.variant}
+                          style={{
+                            backgroundColor: '#3c5a47', // اللون الثابت هنا (أزرق)
+                            borderColor: '#3c5a47' // تأكد من أن اللون متناسق مع الحواف
+                          }}
                           size="sm"
                           onClick={() => handleAddToCart(product.id, discountedPrice)}
                           disabled={loading || stockStatus.disabled}
-                          className="flex-grow-1"
+                          className="flex-grow-1 text-white"
                         >
                           {loading ? (
                             <Spinner size="sm" animation="border" />

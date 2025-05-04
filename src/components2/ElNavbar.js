@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaShoppingCart, FaHeart, FaFilter, FaUser, FaSearch } from 'react-icons/fa';
-import { Navbar, Container, Nav, Dropdown, Badge } from 'react-bootstrap';
+import { Navbar, Container, Dropdown, Badge } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import { useCart } from '../firebase/hooks/UseCart';
 import { useUser } from '../firebase/hooks/UseAuth';
@@ -17,6 +17,8 @@ const ElNavbar = () => {
   const { user, loading } = useUser();
   const navigate = useNavigate();
   const { total = 0, itemCount = 0 } = useCart(user?.uid);
+
+  const textColor = '#3c5a47'; // ← غير اللون من هنا لو حبيت
 
   const handleLogout = async () => {
     try {
@@ -40,14 +42,14 @@ const ElNavbar = () => {
               padding: 0,
               border: 'none',
               background: 'transparent',
-              color: '#000'
+              color: textColor
             }}
           >
             <FaUser size={20} />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => navigate('/profile')}>Profile</Dropdown.Item>
-            <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
+            <Dropdown.Item style={{ color: textColor }} onClick={() => navigate('/profile')}>Profile</Dropdown.Item>
+            <Dropdown.Item style={{ color: textColor }} onClick={handleLogout}>Log Out</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       );
@@ -55,7 +57,7 @@ const ElNavbar = () => {
       return (
         <FaUser
           size={20}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', color: textColor }}
           onClick={() => navigate('/login')}
         />
       );
@@ -69,11 +71,12 @@ const ElNavbar = () => {
   return (
     <>
       <Navbar expand="lg" className="navbar sticky-top py-2" bg="white" variant="light">
-        <Container fluid className="d-flex justify-content-between align-items-center px-3">
+        <Container fluid className="d-flex justify-content-between align-items-center px-3" style={{ color: textColor }}>
+          
           {/* Left Icons */}
           <div className="d-flex align-items-center gap-3">
-            <FaFilter style={{ cursor: 'pointer' }} onClick={() => setShowSidebar(true)} />
-            <FaSearch style={{ cursor: 'pointer' }} onClick={() => setShowSearch(prev => !prev)} />
+            <FaFilter style={{ cursor: 'pointer', color: textColor }} onClick={() => setShowSidebar(true)} />
+            <FaSearch style={{ cursor: 'pointer', color: textColor }} onClick={() => setShowSearch(prev => !prev)} />
           </div>
 
           {/* Center Logo */}
@@ -83,17 +86,21 @@ const ElNavbar = () => {
               fontWeight: 'bold',
               fontSize: '1.5rem',
               letterSpacing: '1px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              color: textColor,
+              fontSize: '30px'
+
+
             }}
           >
-            LOGO
+            volie
           </Navbar.Brand>
 
           {/* Right Icons */}
           <div className="d-flex align-items-center gap-3">
             {renderUserIcon()}
-            <FaHeart style={{ cursor: 'pointer' }} onClick={() => navigate('/favorites')} />
-            <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => navigate('/cart')}>
+            <FaHeart style={{ cursor: 'pointer', color: textColor }} onClick={() => navigate('/favorites')} />
+            <div style={{ position: 'relative', cursor: 'pointer', color: textColor }} onClick={() => navigate('/cart')}>
               <FaShoppingCart />
               {itemCount > 0 && (
                 <Badge

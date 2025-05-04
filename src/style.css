@@ -415,13 +415,15 @@ h2 {
 }
 /* newwwwwwwwww nav bar */
 .navbar {
-  background-color: #ffffffec !important;
-  border-bottom: 1px solid #08080800;
+  background-color: #ffffffa9 !important;
+  border-bottom: 1px solid #f1f5f300;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
 }
-
 .dropdown-toggle::after {
   display: none;
 }
+
+
 /* newwwwwwwwww cat*/
 .categorySlider {
   background-color: #fff;
@@ -469,6 +471,7 @@ h5 {
   padding-bottom: 5%;
   font-size: 50px;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: #436850;
 
 }
 /* newwwwwwwwww NewCollection */
@@ -643,7 +646,7 @@ h5 {
 }
 
 .btn-outline-secondary:hover {
-  background-color: #151616 !important;
+  background-color: #436850 !important;
 }
 
 /* زر عرض المزيد */
@@ -716,8 +719,8 @@ h5 {
 footer.bg-dark {
   padding-top: 1rem !important;
   padding-bottom: 1rem !important;
-  background-color: #050505e0 !important;
-  border-top: 1px solid rgba(10, 10, 10, 0.801);
+  background-color: #3c5a47 !important;
+  border-top: 1px solid rgba(10, 10, 10, 0.014);
 }
 
 footer .container {
