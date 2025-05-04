@@ -90,7 +90,7 @@ const Cart = ({ userId }) => {
         </thead>
         <tbody>
           {cartItems.map((item) => {
-            const price = Number(item.price || 0);
+            const price = Number(item.originalPrice || 0);
             const itemTotal = (price * item.quantity).toFixed(2);
             return (
               <tr key={item.id}>
