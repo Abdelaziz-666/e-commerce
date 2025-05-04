@@ -464,10 +464,11 @@ const AddProduct = ({ show, handleClose, onProductAdded }) => {
       category: '', 
       displayLocations: ['normal'],
        stock: 1,
-      mainImage: null,
-      colors: [],
-      sizes: [],
-      details: []
+       mainImage: null,
+       colors: [],
+       sizes: [],
+       details: []
+       
     });
     setMainImagePreview('');
     setColorImagePreviews({});
