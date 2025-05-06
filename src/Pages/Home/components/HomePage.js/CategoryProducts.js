@@ -211,19 +211,33 @@ const CategoryProducts = () => {
                           </div>
 
                           <div className="d-flex gap-2">
-                            <Button
-                              variant={loading ? 'success' : stockStatus.variant}
-                              size="sm"
-                              onClick={() => handleAddToCart(product.id, discountedPrice)}
-                              disabled={loading || stockStatus.disabled}
-                              className="flex-grow-1"
-                            >
-                              {loading ? (
-                                <Spinner size="sm" animation="border" />
-                              ) : (
-                                stockStatus.text
-                              )}
-                            </Button>
+                             <Button
+                                                      style={{
+                                                        backgroundColor: loading
+                                                          ? '#198754'
+                                                          : stockStatus.disabled
+                                                          ? '#dc3545'
+                                                          : '#3c5a47',
+                                                        borderColor: loading
+                                                          ? '#198754'
+                                                          : stockStatus.disabled
+                                                          ? '#dc3545'
+                                                          : '#3c5a47',
+                                                        color: '#fff'
+                                                      }}
+                                                      variant={stockStatus.variant}
+                                                      size="sm"
+                                                      onClick={() => handleAddToCart(product.id)}
+                                                      disabled={loading || stockStatus.disabled}
+                                                      className="flex-grow-1"
+                                                    >
+                            
+                                                      {loading ? (
+                                                        <Spinner size="sm" animation="border" />
+                                                      ) : (
+                                                        stockStatus.text
+                                                      )}
+                                                    </Button>
                             <Button
                               variant="outline-secondary"
                               size="sm"
