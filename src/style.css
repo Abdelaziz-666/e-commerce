@@ -471,9 +471,14 @@ h5 {
   padding-bottom: 5%;
   font-size: 50px;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: #35523f;
+
+}
+.mt-2c{
   color: #436850;
 
 }
+
 /* newwwwwwwwww NewCollection */
 .NewCollectioncontainer {
   margin: 2rem 0;
@@ -589,6 +594,7 @@ h5 {
   background: rgba(255, 255, 255, 1);
   transform: scale(1.1);
 }
+
 
 /* البادجات */
 .badge {
@@ -721,6 +727,7 @@ footer.bg-dark {
   padding-bottom: 1rem !important;
   background-color: #3c5a47 !important;
   border-top: 1px solid rgba(10, 10, 10, 0.014);
+  margin-top: 10px;
 }
 
 footer .container {
@@ -775,3 +782,6 @@ footer .text-center h5 {
 
 
 
+.fs-6.text-truncate {
+  font-size:17px !important;
+}

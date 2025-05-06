@@ -96,16 +96,30 @@ const Favorites = () => {
                           </small>
                         )}
                       </div>
-                      <div className="mt-auto">
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => navigate(`/product/${product.id}`)}
-                          className="w-100"
-                        >
-                          View Details
-                        </Button>
-                      </div>
+                     <div className="mt-auto">
+  <Button
+    size="sm"
+    onClick={() => navigate(`/product/${product.id}`)}
+    className="w-100"
+    style={{
+      backgroundColor: 'transparent',
+      border: '1px solid #3c5a47',
+      color: '#3c5a47',
+      transition: 'all 0.3s ease'
+    }}
+    onMouseEnter={e => {
+      e.target.style.backgroundColor = '#3c5a47';
+      e.target.style.color = '#fff';
+    }}
+    onMouseLeave={e => {
+      e.target.style.backgroundColor = 'transparent';
+      e.target.style.color = '#3c5a47';
+    }}
+  >
+    View Details
+  </Button>
+</div>
+
                     </Card.Body>
                   </Card>
                 </motion.div>

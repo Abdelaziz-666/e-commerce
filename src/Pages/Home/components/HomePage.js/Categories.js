@@ -76,8 +76,8 @@ const Categories = ({ categories, products }) => {
                                             src={cat.icon} 
                                             alt={cat.name} 
                                             style={{ 
-                                                width: '110px', 
-                                                height: '110px',
+                                                width: '120px', 
+                                                height: '120px',
                                                 objectFit: 'contain'
                                             }} 
                                         />
@@ -85,7 +85,7 @@ const Categories = ({ categories, products }) => {
                                         <span>{cat.icon}</span>
                                     )}
                                 </div>
-                                <h5 className="mt-2">{cat.name}</h5>
+                                <h5 className="mt-2c">{cat.name}</h5>
                             </div>
                         </SplideSlide>
                     ))}

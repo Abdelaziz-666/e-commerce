@@ -332,13 +332,26 @@ function FilteredProducts() {
                         {error && <Alert variant="danger" className="py-1">{error}</Alert>}
 
                         <div className="d-flex gap-2">
-                          <Button
-                            variant={loading ? 'success' : currentQuantity >= product.inStock ? 'danger' : 'primary'}
-                            size="sm"
-                            onClick={() => handleAddToCart(product.id, discountedPrice)}
-                            disabled={loading || currentQuantity >= product.inStock}
-                            className="flex-grow-1"
-                          >
+                        <Button
+  style={{
+    backgroundColor: loading
+      ? '#198754' // أخضر مثل bootstrap success
+      : currentQuantity >= product.inStock
+      ? '#dc3545' // أحمر مثل danger
+      : '#3c5a47', // لونك المخصص
+    borderColor: loading
+      ? '#198754'
+      : currentQuantity >= product.inStock
+      ? '#dc3545'
+      : '#3c5a47',
+    color: '#fff'
+  }}
+  size="sm"
+  onClick={() => handleAddToCart(product.id, discountedPrice)}
+  disabled={loading || currentQuantity >= product.inStock}
+  className="flex-grow-1"
+>
+
                             {loading ? (
                               <Spinner size="sm" animation="border" />
                             ) : currentQuantity >= product.inStock ? (

@@ -52,7 +52,6 @@ const AllCollections = ({ products }) => {
 
     const currentQuantity = quantities[productId] || 0;
 
-    // Check stock availability
     if (currentQuantity >= productToAdd.inStock) {
       setAlertMessage(`Maximum stock reached: ${productToAdd.inStock}`);
       return;
@@ -82,13 +81,13 @@ const AllCollections = ({ products }) => {
 
   const getStockStatus = (product) => {
     if (product.inStock <= 0) {
-      return { 
+      return {
         text: 'Out of stock',
         variant: 'danger',
         disabled: true
       };
     }
-    
+
     const currentQuantity = quantities[product.id] || 0;
     if (currentQuantity >= product.inStock) {
       return {
@@ -97,7 +96,7 @@ const AllCollections = ({ products }) => {
         disabled: true
       };
     }
-    
+
     return {
       text: 'Add to cart',
       variant: 'primary',
@@ -148,7 +147,7 @@ const AllCollections = ({ products }) => {
                     {isFavorite(product.id) ? (
                       <FaHeart style={{ color: 'red', fontSize: '1.4rem' }} />
                     ) : (
-                      <FaRegHeart style={{ color: '#000', fontSize: '1.4rem', textShadow: '0 0 3px #000'}} />
+                      <FaRegHeart style={{ color: '#000', fontSize: '1.4rem', textShadow: '0 0 3px #000' }} />
                     )}
                   </Button>
 
@@ -193,13 +192,22 @@ const AllCollections = ({ products }) => {
                       <div className="d-flex gap-2">
                         <Button
                           style={{
-                            backgroundColor: '#3c5a47', // اللون الثابت هنا (أزرق)
-                            borderColor: '#3c5a47' // تأكد من أن اللون متناسق مع الحواف
+                            backgroundColor: loading
+                              ? '#198754'
+                              : stockStatus.disabled
+                              ? '#dc3545'
+                              : '#3c5a47',
+                            borderColor: loading
+                              ? '#198754'
+                              : stockStatus.disabled
+                              ? '#dc3545'
+                              : '#3c5a47',
+                            color: '#fff'
                           }}
                           size="sm"
                           onClick={() => handleAddToCart(product.id, discountedPrice)}
                           disabled={loading || stockStatus.disabled}
-                          className="flex-grow-1 text-white"
+                          className="flex-grow-1"
                         >
                           {loading ? (
                             <Spinner size="sm" animation="border" />
