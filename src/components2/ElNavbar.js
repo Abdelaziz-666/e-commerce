@@ -93,7 +93,7 @@ const ElNavbar = () => {
 
             }}
           >
-            volie
+            UNIQUE
           </Navbar.Brand>
 
           {/* Right Icons */}
