@@ -198,7 +198,7 @@ const ProductDetails = () => {
 
   const currentQuantity = quantities[product.id] || 0;
   const discountedPrice = product.discount
-    ? parseFloat(product.price) * (1 - product.discount / 100)
+    ? parseFloat(product.originalPrice) * (1 - product.discount / 100)
     : parseFloat(product.price);
   const price = isNaN(discountedPrice) ? 0 : discountedPrice.toFixed(2);
 
@@ -358,7 +358,7 @@ const ProductDetails = () => {
               {product.discount > 0 ? (
                 <>
                   <span className="text-muted text-decoration-line-through me-2">
-                    {parseFloat(product.price).toFixed(2)} EGP
+                    {parseFloat(product.originalPrice).toFixed(2)} EGP
                   </span>
                   <span className="text-danger fw-bold">
                     {price} EGP

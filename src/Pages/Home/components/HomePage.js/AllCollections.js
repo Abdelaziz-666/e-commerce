@@ -63,7 +63,6 @@ const AllCollections = ({ products }) => {
       await addToCart(user.uid, {
         ...productToAdd,
         quantity: currentQuantity + 1,
-        price: discountedPrice
       });
 
       setQuantities(prev => ({
@@ -122,12 +121,6 @@ const AllCollections = ({ products }) => {
         {products.slice(0, visibleCount).map((product) => {
           const loading = loadingStates[product.id];
           const stockStatus = getStockStatus(product);
-          const discountedPrice = product.discount
-            ? parseFloat(product.price) * (1 - product.discount / 100)
-            : parseFloat(product.price);
-
-          const price = isNaN(discountedPrice) ? 0 : discountedPrice.toFixed(2);
-
           return (
             <Col key={product.id} xs={6} sm={6} md={4} lg={3}>
               <motion.div
@@ -178,14 +171,15 @@ const AllCollections = ({ products }) => {
                         {product.discount > 0 ? (
                           <>
                             <span className="text-muted text-decoration-line-through me-2">
-                              {parseFloat(product.price).toFixed(2)}$
+                              {product.originalPrice}$
                             </span>
                             <span className="text-danger fw-bold">
-                              {price}$
+
+                              {parseFloat(product.price).toFixed(2)}$
                             </span>
                           </>
                         ) : (
-                          <span className="fw-bold">{price}$</span>
+                          <span className="fw-bold">{product.price}$</span>
                         )}
                       </div>
 
@@ -204,11 +198,13 @@ const AllCollections = ({ products }) => {
                               : '#3c5a47',
                             color: '#fff'
                           }}
+                          variant={stockStatus.variant}
                           size="sm"
-                          onClick={() => handleAddToCart(product.id, discountedPrice)}
+                          onClick={() => handleAddToCart(product.id)}
                           disabled={loading || stockStatus.disabled}
                           className="flex-grow-1"
                         >
+
                           {loading ? (
                             <Spinner size="sm" animation="border" />
                           ) : (

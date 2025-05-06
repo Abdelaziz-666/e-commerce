@@ -90,8 +90,9 @@ const Cart = ({ userId }) => {
         </thead>
         <tbody>
           {cartItems.map((item) => {
-            const price = Number(item.price || 0);
-            const itemTotal = (price * item.quantity).toFixed(2);
+const price = parseFloat(item.price) || 0;
+const itemTotal = (price * item.quantity).toFixed(2);
+
             return (
               <tr key={item.id}>
                 <td>
@@ -167,12 +168,12 @@ const Cart = ({ userId }) => {
           <div className="border p-3 rounded bg-light shadow-sm">
             <div className="d-flex justify-content-between mb-2">
               <span>Subtotal:</span>
-              <span>${Number(total).toFixed(2)}</span>
+              <span>${parseFloat(total).toFixed(2)}</span>
             </div>
             <hr />
             <h4 className="d-flex justify-content-between mb-3">
               <span>Total:</span>
-              <span className="text-primary">${Number(total).toFixed(2)}</span>
+              <span>${parseFloat(total).toFixed(2)}</span>
             </h4>
             <Button 
               variant="primary" 
