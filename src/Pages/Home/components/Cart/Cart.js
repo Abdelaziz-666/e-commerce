@@ -90,8 +90,9 @@ const Cart = ({ userId }) => {
         </thead>
         <tbody>
           {cartItems.map((item) => {
-            const price = parseFloat(item.price).toFixed(2) || 0);
-            const itemTotal = (price * item.quantity).toFixed(2);
+const price = parseFloat(item.price) || 0;
+const itemTotal = (price * item.quantity).toFixed(2);
+
             return (
               <tr key={item.id}>
                 <td>

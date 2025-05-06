@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { db } from "../Config";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -27,7 +28,6 @@ export const useCart = (userId) => {
 
           const userData = docSnapshot.data();
           
-          // التحقق من وجود السلة وهيكلتها
           if (!userData.cart || !Array.isArray(userData.cart)) {
             console.warn("Cart data is missing or not an array");
             setCart([]);
@@ -36,18 +36,18 @@ export const useCart = (userId) => {
           }
 
           const processedCart = userData.cart
-            .filter(item => item && item.id) // تأكد من وجود العناصر الأساسية
+            .filter(item => item && item.id) 
             .map(item => ({
               id: item.id,
               name: item.name || 'Unnamed Product',
-              price: parseFloat(item.price).toFixed(2) || 0,
+              price: parseFloat(item.price)|| 0,
               quantity: Number(item.quantity) || 1,
               image: item.image || '/images/no-image.png',
               inStock: Number(item.inStock) || 0,
               ...item
             }));
 
-          console.log("Processed cart items:", processedCart); // لأغراض التصحيح
+          console.log("Processed cart items:", processedCart); 
           setCart(processedCart);
           setLoading(false);
           setError(null);
@@ -78,3 +78,4 @@ export const useCart = (userId) => {
     itemCount 
   };
 };
+

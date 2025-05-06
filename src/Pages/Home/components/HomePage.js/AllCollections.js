@@ -64,7 +64,6 @@ const AllCollections = ({ products }) => {
       await addToCart(user.uid, {
         ...productToAdd,
         quantity: currentQuantity + 1,
-        price: discountedPrice
       });
 
       setQuantities(prev => ({
@@ -82,13 +81,13 @@ const AllCollections = ({ products }) => {
 
   const getStockStatus = (product) => {
     if (product.inStock <= 0) {
-      return { 
+      return {
         text: 'Out of stock',
         variant: 'danger',
         disabled: true
       };
     }
-    
+
     const currentQuantity = quantities[product.id] || 0;
     if (currentQuantity >= product.inStock) {
       return {
@@ -97,7 +96,7 @@ const AllCollections = ({ products }) => {
         disabled: true
       };
     }
-    
+
     return {
       text: 'Add to cart',
       variant: 'primary',
@@ -123,12 +122,6 @@ const AllCollections = ({ products }) => {
         {products.slice(0, visibleCount).map((product) => {
           const loading = loadingStates[product.id];
           const stockStatus = getStockStatus(product);
-          const discountedPrice = product.discount
-            ? parseFloat(product.price) * (1 - product.discount / 100)
-            : parseFloat(product.price);
-
-          const price = isNaN(discountedPrice) ? 0 : discountedPrice.toFixed(2);
-
           return (
             <Col key={product.id} xs={6} sm={6} md={4} lg={3}>
               <motion.div
@@ -148,7 +141,7 @@ const AllCollections = ({ products }) => {
                     {isFavorite(product.id) ? (
                       <FaHeart style={{ color: 'red', fontSize: '1.4rem' }} />
                     ) : (
-                      <FaRegHeart style={{ color: '#000', fontSize: '1.4rem', textShadow: '0 0 3px #000'}} />
+                      <FaRegHeart style={{ color: '#000', fontSize: '1.4rem', textShadow: '0 0 3px #000' }} />
                     )}
                   </Button>
 
@@ -182,26 +175,29 @@ const AllCollections = ({ products }) => {
                               {product.originalPrice}$
                             </span>
                             <span className="text-danger fw-bold">
-                              
-                    {parseFloat(product.price).toFixed(2)}$
+
+                              {parseFloat(product.price).toFixed(2)}$
                             </span>
                           </>
                         ) : (
-                          <span className="fw-bold">{price}$</span>
+                          <span className="fw-bold">{product.price}$</span>
                         )}
                       </div>
 
                       <div className="d-flex gap-2">
                         <Button
-                          style={{
-                            backgroundColor: '#3c5a47', // اللون الثابت هنا (أزرق)
-                            borderColor: '#3c5a47' // تأكد من أن اللون متناسق مع الحواف
-                          }}
+                          variant={stockStatus.variant}
+                          style={
+                            stockStatus.variant === 'primary'
+                              ? { backgroundColor: '#3c5a47', borderColor: '#3c5a47', color: 'white' }
+                              : {}
+                          }
                           size="sm"
-                          onClick={() => handleAddToCart(product.id, discountedPrice)}
+                          onClick={() => handleAddToCart(product.id)}
                           disabled={loading || stockStatus.disabled}
-                          className="flex-grow-1 text-white"
+                          className="flex-grow-1"
                         >
+
                           {loading ? (
                             <Spinner size="sm" animation="border" />
                           ) : (
