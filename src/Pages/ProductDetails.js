@@ -361,14 +361,14 @@ const ProductDetails = () => {
                     {parseFloat(product.originalPrice).toFixed(2)} EGP
                   </span>
                   <span className="text-danger fw-bold">
-                    {price} EGP
+                    {price} $
                   </span>
                   <Badge bg="success" className="ms-2">
                     {product.discount}% OFF
                   </Badge>
                 </>
               ) : (
-                <span className="fw-bold">{parseFloat(product.price).toFixed(2)} EGP</span>
+                <span className="fw-bold">{parseFloat(product.price).toFixed(2)} $</span>
               )}
             </div>
 
