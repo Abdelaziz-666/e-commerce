@@ -358,7 +358,7 @@ const ProductDetails = () => {
               {product.discount > 0 ? (
                 <>
                   <span className="text-muted text-decoration-line-through me-2">
-                    {parseFloat(product.originalPrice).toFixed(2)} EGP
+                    {parseFloat(product.originalPrice).toFixed(2)} $
                   </span>
                   <span className="text-danger fw-bold">
                     {price} $
