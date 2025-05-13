@@ -67,6 +67,8 @@ const Favorites = () => {
                       onError={(e) => {
                         e.target.src = fallbackImage;
                       }}
+                      onClick={() => navigate(`/product/${product.id}`)}
+
                     />
 
                     {product.inStock <= 0 && (

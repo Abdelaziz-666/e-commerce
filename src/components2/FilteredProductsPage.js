@@ -7,6 +7,7 @@ import { db } from "../firebase/Config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useFavorites from "../firebase/services/Favorites-service";
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { addToCart } from "../firebase/services/Cart-service";
 
 function FilteredProducts() {
   const [products, setProducts] = useState([]);
@@ -70,58 +71,28 @@ function FilteredProducts() {
     setQuantities(updatedQuantities);
   };
 
-  const addToCart = async (userId, product) => {
-    try {
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-      
-      if (!userDoc.exists()) {
-        throw new Error("User document doesn't exist");
-      }
-
-      const userData = userDoc.data();
-      const cart = userData.cart || [];
-      
-      const existingItemIndex = cart.findIndex(item => item.id === product.id);
-      
-      if (existingItemIndex >= 0) {
-        cart[existingItemIndex].quantity = product.quantity;
-      } else {
-        cart.push(product);
-      }
-
-      await updateDoc(userRef, { cart });
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      throw error;
-    }
-  };
-
-  const handleAddToCart = async (productId, discountedPrice) => {
+  const handleAddToCart = async (productId) => {
     if (!user) {
       navigate('/login');
       return;
     }
 
+    const productToAdd = products.find(p => p.id === productId);
+    if (!productToAdd || !productToAdd.id) return;
+
+    const currentQuantity = quantities[productId] || 0;
+
+    if (currentQuantity >= productToAdd.inStock) {
+      setAlertMessage(`Maximum stock reached: ${productToAdd.inStock}`);
+      return;
+    }
+
     setLoadingStates(prev => ({ ...prev, [productId]: true }));
-    setErrors(prev => ({ ...prev, [productId]: null }));
 
     try {
-      const productToAdd = products.find(p => p.id === productId);
-      if (!productToAdd) {
-        throw new Error("Product not found");
-      }
-
-      const currentQuantity = quantities[productId] || 0;
-      
-      if (currentQuantity >= productToAdd.stock) {
-        throw new Error("Maximum stock reached");
-      }
-
       await addToCart(user.uid, {
         ...productToAdd,
         quantity: currentQuantity + 1,
-        price: discountedPrice
       });
 
       setQuantities(prev => ({
@@ -129,13 +100,9 @@ function FilteredProducts() {
         [productId]: currentQuantity + 1
       }));
 
-      setAlertMessage(`Added To Cart`);
-      setTimeout(() => setAlertMessage(null), 3000);
+      setAlertMessage('Added to cart successfully');
     } catch (error) {
-      setErrors(prev => ({
-        ...prev,
-        [productId]: error.message
-      }));
+      setAlertMessage('Error adding to cart');
     } finally {
       setLoadingStates(prev => ({ ...prev, [productId]: false }));
     }
@@ -261,11 +228,6 @@ function FilteredProducts() {
             const error = errors[product.id];
             const currentQuantity = quantities[product.id] || 0;
 
-            const discountedPrice = product.discount
-              ? parseFloat(product.price) * (1 - product.discount / 100)
-              : parseFloat(product.price);
-
-            const price = isNaN(discountedPrice) ? 0 : discountedPrice.toFixed(2);
 
             return (
               <Col key={product.id} xs={10} sm={6} md={4} lg={3}>
@@ -296,6 +258,8 @@ function FilteredProducts() {
                       alt={product.name}
                       style={{ height: '200px', objectFit: 'contain' }}
                       onError={(e) => { e.target.src = fallbackImage }}
+                      onClick={() => navigate(`/product/${product.id}`)}
+
                     />
 
                     {product.inStock <= 0 && (
@@ -318,14 +282,14 @@ function FilteredProducts() {
                           {product.discount > 0 ? (
                             <>
                               <span className="text-muted text-decoration-line-through me-2">
-                                {parseFloat(product.price).toFixed(2)}$
+                                {parseFloat(product.originalPrice).toFixed(2)}$
                               </span>
                               <span className="text-danger fw-bold">
-                                {price}$
+                                {product.price}$
                               </span>
                             </>
                           ) : (
-                            <span className="fw-bold">{price}$</span>
+                            <span className="fw-bold">{product.price}$</span>
                           )}
                         </div>
 
@@ -347,7 +311,7 @@ function FilteredProducts() {
     color: '#fff'
   }}
   size="sm"
-  onClick={() => handleAddToCart(product.id, discountedPrice)}
+  onClick={() => handleAddToCart(product.id)}
   disabled={loading || currentQuantity >= product.inStock}
   className="flex-grow-1"
 >

@@ -41,7 +41,7 @@ const AllCollections = ({ products }) => {
     if (user) fetchQuantities();
   }, [user, products]);
 
-  const handleAddToCart = async (productId, discountedPrice) => {
+  const handleAddToCart = async (productId) => {
     if (!user) {
       navigate('/login');
       return;
