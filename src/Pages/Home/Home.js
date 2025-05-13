@@ -9,9 +9,8 @@ import AllCollectionsText from './components/HomePage.js/AllCollectionsText';
 import AllCollections from './components/HomePage.js/AllCollections';
 import Sidebar from '../../components2/Sidebar';
 import Favorites from '../Favorites';
-
-// ✅ استدعاء الفوتر
 import Footer from './components/HomePage.js/Footer';
+import Testimonials from './components/Testimonials';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -90,7 +89,7 @@ const Home = () => {
       
       <Sidebar products={products} />
 
-      {/* ✅ إضافة الفوتر هنا */}
+      <Testimonials />
       <Footer />
     </div>
   );

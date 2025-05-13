@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDocs, addDoc, getDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, addDoc, getDoc, query, where } from "firebase/firestore";
 import { db } from "../Config";
 
 export const getProducts = async () => {
@@ -40,5 +40,26 @@ export const getProductById = async (id) => {
   } catch (error) {
     console.error("Error fetching product:", error);
     return null;
+  }
+};
+
+export const getProductsByCategory = async (category, excludeId = null) => {
+  try {
+    const q = query(
+      collection(db, "products"),
+      where("category", "==", category)
+    );
+    const snapshot = await getDocs(q);
+    const products = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (doc.id !== excludeId) {
+        products.push({ id: doc.id, ...data });
+      }
+    });
+    return products;
+  } catch (error) {
+    console.error("Error fetching similar products:", error);
+    return [];
   }
 };

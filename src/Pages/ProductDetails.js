@@ -11,7 +11,8 @@ import {
   Toast,
   ToastContainer,
   Alert,
-  Form
+  Form,
+  Card
 } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import { AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart } from 'react-icons/ai';
@@ -20,7 +21,8 @@ import { auth, db } from '../firebase/Config';
 import { getProductById } from '../firebase/services/Product-service';
 import { addToCart } from '../firebase/services/Cart-service';
 import useFavorites from '../firebase/services/Favorites-service';
-import { doc, getDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, onSnapshot, query, serverTimestamp, where } from 'firebase/firestore';
+import { getProductsByCategory } from '../firebase/services/Product-service';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -36,9 +38,11 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [mainImage, setMainImage] = useState('');
-  
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const { favorites, toggleFavorite } = useFavorites();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -55,6 +59,8 @@ const ProductDetails = () => {
         if (data) {
           setProduct(data);
           setMainImage(data.mainImage || data.image || '');
+          const similar = await getProductsByCategory(data.category, id);
+          setRelatedProducts(similar);
         } else {
           console.error("Product data is missing or invalid");
         }
@@ -74,6 +80,24 @@ const ProductDetails = () => {
     }
   }, [favorites, product, user]);
 
+  useEffect(() => {
+    if (!id) return;
+    const q = query(
+        collection(db, `products/${id}/comments`),
+        where('approved', '==', true) // عرض التعليقات المعتمدة فقط
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+        const fetched = snapshot.docs.map(doc => ({ 
+            id: doc.id, 
+            ...doc.data(),
+            createdAt: doc.data().createdAt?.toDate() 
+        }));
+        setComments(fetched.sort((a, b) => b.createdAt - a.createdAt));
+    });
+    return () => unsubscribe();
+}, [id]);
+
+
   const fetchQuantities = async () => {
     if (!user) return;
     const userRef = doc(db, "users", user.uid);
@@ -92,6 +116,34 @@ const ProductDetails = () => {
   useEffect(() => {
     if (user && product) fetchQuantities();
   }, [user, product]);
+
+  const handleSubmitComment = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    if (!commentText.trim()) {
+      setAlertMessage('Please enter a comment');
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, `products/${id}/comments`), {
+        text: commentText.trim(),
+        userName: user.displayName || user.email.split('@')[0],
+        userEmail: user.email,
+        userId: user.uid,
+        approved: false, 
+        createdAt: serverTimestamp()
+      });
+      setCommentText('');
+      setAlertMessage('Comment submitted for admin approval');
+    } catch (err) {
+      console.error("Error adding comment:", err);
+      setAlertMessage('Error submitting comment');
+    }
+  };
 
   const handleToggleFavorite = async () => {
     if (!user) {
@@ -423,7 +475,99 @@ const ProductDetails = () => {
             </div>
           </Col>
         </Row>
+        
+        {/* Comments Section */}
+
       </motion.div>
+      
+      {relatedProducts.length > 0 && (
+        <div className="mt-4">
+          <h6 style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>You might also like:</h6>
+          <div 
+            style={{ 
+              display: 'flex', 
+              overflowX: 'auto', 
+              gap: '10px', 
+              paddingBottom: '10px',
+              scrollbarWidth: 'none' 
+            }}
+          >
+            {relatedProducts.map((prod) => (
+              <motion.div
+                key={prod.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                className="p-2 border rounded-3 bg-white shadow-sm"
+                style={{ minWidth: '140px', flex: '0 0 auto', fontSize: '0.75rem' }}
+                onClick={() => navigate(`/product/${prod.id}`)}
+              >
+                <img 
+                  src={prod.mainImage || prod.image || ''} 
+                  alt={prod.name} 
+                  style={{ width: '100%', height: '100px', objectFit: 'contain' }} 
+                  className="mb-2 rounded"
+                />
+                <div className="fw-bold text-truncate">{prod.name}</div>
+                <div className="text-muted" style={{ fontSize: '0.7rem' }}>
+                  {prod.inStock? prod.discount
+                    ? <>
+                        <span className="text-decoration-line-through">{prod.originalPrice}$</span>
+                        <span className="text-danger ms-1">{(prod.price).toFixed(2)}$</span>
+                      </>
+                    : <>{prod.price}$</>
+                  : null }
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+              <div className="mt-4">
+          <h5 style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Customer Reviews</h5>
+          
+          {user && (
+            <Card className="mb-3">
+              <Card.Body>
+                <Form.Group>
+                  <Form.Label>Add your review</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Share your thoughts about this product..."
+                  />
+                </Form.Group>
+                <Button  
+                  style={{background:'#3c5a47'}}
+                  size="sm" 
+                  className="mt-2"
+                  onClick={handleSubmitComment}
+                >
+                  Submit Review
+                </Button>
+              </Card.Body>
+            </Card>
+          )}
+          
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <Card key={comment.id} className="mb-2">
+                <Card.Body>
+                  <div className="d-flex justify-content-between">
+                    <strong>{comment.userName}</strong>
+                    <small className="text-muted">
+                      {comment.createdAt?.toLocaleDateString()}
+                    </small>
+                  </div>
+                  <p className="mt-2 mb-0">{comment.text}</p>
+                </Card.Body>
+              </Card>
+            ))
+          ) : (
+            <p className="text-muted">No reviews yet</p>
+          )}
+        </div>
     </Container>
   );
 };

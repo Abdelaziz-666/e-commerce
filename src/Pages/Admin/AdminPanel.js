@@ -7,6 +7,8 @@ import { auth, db } from '../../firebase/Config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import OrdersManagement from './OrdersManagement';
+import TestimonialsAdmin from './TestimonialsAdmin';
+import AdminCommEachProd from './AdminCommEachProd';
 
 const AdminPanel = () => {
   const { products, deleteProduct } = useProducts();
@@ -216,6 +218,9 @@ const AdminPanel = () => {
           </Modal.Footer>
         </Modal>
         <OrdersManagement/>
+        <TestimonialsAdmin />
+        <AdminCommEachProd/>
+
       </Container>
     </motion.div>
   );
